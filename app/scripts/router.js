@@ -5,19 +5,23 @@ var Router = Backbone.Router.extend({
       '': 'index',
       'new-recipe': 'newRecipe',
       'recipe-preview': 'preview',
+      'profile': 'profile',
       '*notFound': 'catch'
     },
     index: function(){
-      this.current = 'home'
+      this.current = 'home';
     },
     newRecipe: function(){
-      this.current = 'new'
+      this.current = 'new';
     },
     preview: function(){
-      this.current = 'preview'
+      this.current = 'preview';
+    },
+    profile: function(){
+      this.current = 'profile';
     },
     catch: function(){
-      this.current = 'notFound'
+      this.current = 'notFound';
     }
 });
 
