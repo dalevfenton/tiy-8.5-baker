@@ -1,6 +1,8 @@
 var React = require('react');
 
 var Header = require('./header.jsx');
+var Sidebar = require('./sidebar.jsx');
+
 
 var Interface = React.createClass({
   getInitialState: function(){
@@ -60,9 +62,18 @@ var Interface = React.createClass({
 
 
     return (
-      <div className="container">
-        <Header page={this.state.router.current} user={this.state.user} />
-        {body}
+      <div>
+        <div className="container-fluid">
+            <Header page={this.state.router.current} user={this.state.user} />
+        </div>
+        <div className="container-fluid">
+          <div className="row">
+            <Sidebar page={this.state.router.current} />
+            <div className="col-sm-10">
+              {body}
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
