@@ -8,8 +8,29 @@ var ButtonInput = require('react-bootstrap').ButtonInput;
 var Image = require('react-bootstrap').Image;
 var TitleChiron = require('./titlechiron.jsx');
 var RecipeStep = require('./recipestep.jsx');
+var LinkedStateMixin = require('react/lib/LinkedStateMixin');
 
 var NewRecipe = React.createClass({
+  mixins: [LinkedStateMixin],
+  getInitialState: function(){
+    return {
+      title: '',
+      user: '',
+      pubpriv: 'public',
+      recipeType: '',
+      prepTime: '',
+      cookTime: '',
+      temp: '',
+      tempScale: '',
+      servingsBase: '',
+      steps: [],
+      notes: ''
+    }
+  },
+  handleSubmit: function(e){
+    e.preventDefault();
+    console.log(this.state);
+  },
   render: function(){
     var innerDropdown = (
       <DropdownButton title="&deg;F" id="input-dropdown-addon">
@@ -20,7 +41,7 @@ var NewRecipe = React.createClass({
     return (
       <div>
         <Panel header="Add A New Recipe">
-          <form>
+          <form onSubmit={this.handleSubmit}>
             <div className="row">
               <div className="col-sm-12">
                 <TitleChiron title="Basic Info" />
@@ -33,37 +54,38 @@ var NewRecipe = React.createClass({
               <div className="col-sm-9">
                 <div className="row">
                   <div className="col-sm-12">
-                    <Input type="text" placeholder="Recipe Name" />
-                    <Input type="text" placeholder="Author" />
+                    <Input type="text" placeholder="Recipe Name"
+                      valueLink={this.linkState('title')} />
                   </div>
                   <div className="col-sm-6">
+                    <Input type="number" placeholder="Prep Time" addonAfter="mins"
+                      valueLink={this.linkState('prepTime')} />
+                  </div>
+                  <div className="col-sm-6">
+                    <Input type="number" placeholder="Cook Time" addonAfter="mins"
+                      valueLink={this.linkState('cookTime')} />
+                  </div>
+                  <div className="col-sm-6">
+                    <Input type="select" placeholder="Recipe Type"
+                      >
+                      <option value="Recipe Type">Recipe Type</option>
+                      <option value="Breakfast">Breakfast</option>
+                      <option value="Lunch">Lunch</option>
+                      <option value="Dinner">Dinner</option>
+                      <option value="Dessert">Dessert</option>
+                      <option value="Appetizer">Appetizer</option>
+                    </Input>
+                  </div>
+                  <div className="col-sm-6">
+                    <Input type="number" placeholder="Cooking Temp" buttonAfter={innerDropdown} />
+                  </div>
+                  <div className="col-sm-3">
                     <Input type="radio" name="pubpriv" value="public" label="Public" defaultChecked />
                   </div>
-                  <div className="col-sm-6">
+                  <div className="col-sm-3">
                     <Input type="radio" name="pubpriv" value="private" label="Private" />
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-sm-3">
-                <Input type="select" placeholder="Recipe Type">
-                  <option value="Recipe Type">Recipe Type</option>
-                  <option value="Breakfast">Breakfast</option>
-                  <option value="Lunch">Lunch</option>
-                  <option value="Dinner">Dinner</option>
-                  <option value="Dessert">Dessert</option>
-                  <option value="Appetizer">Appetizer</option>
-                </Input>
-              </div>
-              <div className="col-sm-3">
-                <Input type="number" placeholder="Prep Time" />
-              </div>
-              <div className="col-sm-3">
-                <Input type="number" placeholder="Cook Time" />
-              </div>
-              <div className="col-sm-3">
-                <Input type="number" placeholder="Temp" buttonAfter={innerDropdown} />
               </div>
             </div>
             <div className="row">
@@ -80,8 +102,8 @@ var NewRecipe = React.createClass({
                 <Input type="textarea" placeholder="Add Your Notes Here" />
               </div>
             </div>
-
-            <ButtonInput type="submit" block value="Save This Recipe!" bsStyle="success" />
+            <ButtonInput type="submit" block value="Save This Recipe!"
+              bsStyle="success" />
           </form>
         </Panel>
       </div>

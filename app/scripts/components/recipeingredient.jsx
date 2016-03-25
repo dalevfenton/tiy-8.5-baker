@@ -20,11 +20,11 @@ var Ingredient = React.createClass({
             <option value="Lb">pound</option>
           </Input>
         </div>
-        <div className="col-sm-6">
+        <div className="col-sm-5">
           <Input type="text" placeholder="Ingredient" />
         </div>
-        <div className="col-sm-1">
-          <ButtonInput value="+" onClick={this.handleSubmit}/>
+        <div className="col-sm-2">
+          <ButtonInput value="Add" onClick={this.handleSubmit} block />
         </div>
       </div>
     );
