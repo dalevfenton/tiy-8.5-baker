@@ -18,13 +18,15 @@ var LoginForm = React.createClass({
   },
   signup: function(e){
     e.preventDefault();
-    console.log(this.state);
+    // console.log(this.state);
     this.resetState();
+    this.props.signUp(this.state);
   },
   login: function(e){
     e.preventDefault();
-    console.log(this.state);
+    // console.log(this.state);
     this.resetState();
+    this.props.login(this.state);
   },
   resetState: function(){
     this.setState({

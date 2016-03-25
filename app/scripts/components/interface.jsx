@@ -1,5 +1,8 @@
 var React = require('react');
 var Backbone = require('backbone');
+var Parse = require('parse');
+Parse.initialize("dvf_tiy_gvl");
+Parse.serverURL = 'http://tiy-parse-server.herokuapp.com';
 
 var Header = require('./header.jsx');
 var Sidebar = require('./sidebar.jsx');
@@ -16,6 +19,40 @@ var Interface = React.createClass({
   newRecipe: function(recipeId){
     var nav = 'recipe/' + recipeId
     Backbone.history.navigate(nav, {trigger:true});
+  },
+  signUp: function(userObj){
+    console.log('inside signUp of Interface');
+    var user = new Parse.User();
+    user.set("username", userObj.username);
+    user.set("password", userObj.password);
+    user.set("email", userObj.email);
+    user.set("firstname", userObj.firstname);
+    user.set("lastname", userObj.lastname);
+
+    user.signUp(null, {
+      success: function(user) {
+        // Hooray! Let them use the app now.
+        console.log('success: ', user);
+      },
+      error: function(user, error) {
+        // Show the error message somewhere and let the user try again.
+        console.log("Error: " + error.code + " " + error.message);
+      }
+    });
+  },
+  login: function(userObj){
+    console.log('inside login of Interface');
+    Parse.User.logIn(userObj.username, userObj.password, {
+      success: function(user) {
+        // Do stuff after successful login.
+        console.log('successful login', user);
+      },
+      error: function(user, error) {
+        // The login failed. Check error to see why.
+        console.log('failed login', user);
+        console.log('failed login error: ', error );
+      }
+    });
   },
   componentWillMount: function(){
     this.callback = (function(){
@@ -73,7 +110,8 @@ var Interface = React.createClass({
     return (
       <div>
         <div className="container-fluid">
-            <Header page={this.state.router.current} user={this.state.user} />
+            <Header page={this.state.router.current} user={this.state.user}
+              signUp={this.signUp} login={this.login}/>
         </div>
         <div className="container-fluid">
           <div className="row">

@@ -72,7 +72,7 @@ var Header = React.createClass({
             <Modal.Title>Login Now To Start Creating And Saving Recipes</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <LoginForm />
+            <LoginForm signUp={this.props.signUp} login={this.props.login}/>
           </Modal.Body>
         </Modal>
       </div>
