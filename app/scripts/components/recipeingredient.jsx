@@ -1,30 +1,31 @@
 var React = require('react');
-var Input = require('react-bootstrap').Input;
 var ButtonInput = require('react-bootstrap').ButtonInput;
 
 var Ingredient = React.createClass({
   render: function(){
+    var plural = '';
+    if(this.props.ingredient.amount !== 1){
+      plural = 's';
+    }
     return (
       <div className="row">
         <div className="col-sm-2">
-          <Input type="number" placeholder="Amount" />
+          <div className="ing-amount ingredient-display">
+            {this.props.ingredient.amount}
+          </div>
         </div>
         <div className="col-sm-3">
-          <Input type="select" placeholder="Unit">
-            <option value="Unit">Unit</option>
-            <option value="tsp">teaspoon</option>
-            <option value="Tbsp">tablespoon</option>
-            <option value="Fl Oz">fluid ounce</option>
-            <option value="Cup">cup</option>
-            <option value="Oz">ounce</option>
-            <option value="Lb">pound</option>
-          </Input>
+          <div className="ing-unit ingredient-display">
+            {this.props.ingredient.units}
+          </div>
         </div>
         <div className="col-sm-5">
-          <Input type="text" placeholder="Ingredient" />
+          <div className="ing-ingredient ingredient-display">
+            {this.props.ingredient.ingredient}
+          </div>
         </div>
         <div className="col-sm-2">
-          <ButtonInput value="Add" onClick={this.handleSubmit} block />
+          <ButtonInput value="Edit" onClick={this.handleSubmit} block />
         </div>
       </div>
     );

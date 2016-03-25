@@ -1,4 +1,5 @@
 var React = require('react');
+
 var Panel = require('react-bootstrap').Panel;
 var DropdownButton = require('react-bootstrap').DropdownButton;
 var MenuItem = require('react-bootstrap').MenuItem;
@@ -6,8 +7,11 @@ var Input = require('react-bootstrap').Input;
 var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
 var ButtonInput = require('react-bootstrap').ButtonInput;
 var Image = require('react-bootstrap').Image;
+
 var TitleChiron = require('./titlechiron.jsx');
 var RecipeStep = require('./recipestep.jsx');
+var Step = require('./step.jsx');
+
 var LinkedStateMixin = require('react/lib/LinkedStateMixin');
 
 var NewRecipe = React.createClass({
@@ -21,23 +25,42 @@ var NewRecipe = React.createClass({
       prepTime: '',
       cookTime: '',
       temp: '',
-      tempScale: '',
-      servingsBase: '',
+      tempScale: 0,
+      servings: '',
       steps: [],
       notes: ''
     }
+  },
+  setVisiblity: function(e){
+    this.setState({'pubpriv': e.target.value });
+  },
+  getTempScale: function(e, key){
+    this.setState({'tempScale': key });
+  },
+  addStep: function(stepObj){
+    var steps = this.state.steps;
+    steps.push(stepObj);
+    this.setState({'steps': steps});
   },
   handleSubmit: function(e){
     e.preventDefault();
     console.log(this.state);
   },
   render: function(){
+    var tempSc = ['F', 'C'][this.state.tempScale];
     var innerDropdown = (
-      <DropdownButton title="&deg;F" id="input-dropdown-addon">
-        <MenuItem key="1">&deg;F</MenuItem>
-        <MenuItem key="2">&deg;C</MenuItem>
+      <DropdownButton
+        title={ tempSc }
+        id="input-dropdown-addon"
+        onSelect={ this.getTempScale }
+        key={ this.state.tempScale } >
+        <MenuItem eventKey="0" key="0">&deg;F</MenuItem>
+        <MenuItem eventKey="1" key="1">&deg;C</MenuItem>
       </DropdownButton>
     );
+    var steps = this.state.steps.map(function(step, index){
+      return <Step step={step} index={index} key={index} />
+    });
     return (
       <div>
         <Panel header="Add A New Recipe">
@@ -67,6 +90,7 @@ var NewRecipe = React.createClass({
                   </div>
                   <div className="col-sm-6">
                     <Input type="select" placeholder="Recipe Type"
+                      valueLink={this.linkState('recipeType')}
                       >
                       <option value="Recipe Type">Recipe Type</option>
                       <option value="Breakfast">Breakfast</option>
@@ -77,29 +101,41 @@ var NewRecipe = React.createClass({
                     </Input>
                   </div>
                   <div className="col-sm-6">
-                    <Input type="number" placeholder="Cooking Temp" buttonAfter={innerDropdown} />
+                    <Input type="number" placeholder="Cooking Temp"
+                      buttonAfter={innerDropdown}
+                      getScale={this.getCookingTemp}
+                      valueLink={this.linkState('temp')} />
                   </div>
                   <div className="col-sm-3">
-                    <Input type="radio" name="pubpriv" value="public" label="Public" defaultChecked />
+                    <Input type="radio" name="pubpriv"
+                      value="public" label="Public"
+                      defaultChecked onChange={this.setVisiblity} />
                   </div>
                   <div className="col-sm-3">
-                    <Input type="radio" name="pubpriv" value="private" label="Private" />
+                    <Input type="radio" name="pubpriv"
+                      value="private" label="Private"
+                      onChange={this.setVisiblity} />
                   </div>
                 </div>
               </div>
             </div>
             <div className="row">
               <div className="col-sm-12">
-                <Input type="number" addonBefore="This Recipe Will Make" addonAfter="Servings" />
+                <Input type="number" addonBefore="This Recipe Will Make"
+                  addonAfter="Servings" valueLink={this.linkState('servings')} />
               </div>
             </div>
             <div className="row">
-              <RecipeStep index={1} />
+              {steps}
+            </div>
+            <div className="row">
+              <RecipeStep index={this.state.steps.length + 1} addStep={this.addStep}/>
             </div>
             <div className="row">
               <div className="col-sm-12">
                 <TitleChiron title="Personal Notes" />
-                <Input type="textarea" placeholder="Add Your Notes Here" />
+                <Input type="textarea" placeholder="Add Your Notes Here"
+                  valueLink={this.linkState('notes')} />
               </div>
             </div>
             <ButtonInput type="submit" block value="Save This Recipe!"
