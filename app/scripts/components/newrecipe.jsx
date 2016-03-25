@@ -44,7 +44,10 @@ var NewRecipe = React.createClass({
   },
   handleSubmit: function(e){
     e.preventDefault();
+    //do submission
     console.log(this.state);
+    var recipeId = 1;
+    this.props.newRecipe(recipeId);
   },
   render: function(){
     var tempSc = ['F', 'C'][this.state.tempScale];

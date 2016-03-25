@@ -1,8 +1,10 @@
 var React = require('react');
+var Backbone = require('backbone');
 
 var Header = require('./header.jsx');
 var Sidebar = require('./sidebar.jsx');
 var NewRecipe = require('./newrecipe.jsx');
+var Recipe = require('./recipe.jsx');
 
 var Interface = React.createClass({
   getInitialState: function(){
@@ -10,6 +12,10 @@ var Interface = React.createClass({
       router: this.props.router,
       user: null
     }
+  },
+  newRecipe: function(recipeId){
+    var nav = 'recipe/' + recipeId
+    Backbone.history.navigate(nav, {trigger:true});
   },
   componentWillMount: function(){
     this.callback = (function(){
@@ -34,7 +40,12 @@ var Interface = React.createClass({
     }else if(this.state.router.current == 'new'){
       //new recipe form
       body = (
-        <NewRecipe />
+        <NewRecipe newRecipe={this.newRecipe}/>
+      );
+    }else if(this.state.router.current == 'recipe'){
+      //new recipe form
+      body = (
+        <Recipe id={this.state.router.recipeId} editRecipe={this.editRecipe}/>
       );
     }else if(this.state.router.current == 'preview'){
       //recipe view screen
