@@ -7,18 +7,14 @@ var Modal = require('react-bootstrap').Modal;
 var Button = require('react-bootstrap').Button;
 var Input = require('react-bootstrap').Input;
 var ButtonInput = require('react-bootstrap').ButtonInput;
-var LinkedStateMixin = require('react/lib/LinkedStateMixin');
+
+var LoginForm = require('./loginform.jsx');
 
 var Header = React.createClass({
-  mixins: [LinkedStateMixin],
+
   getInitialState: function(){
     return {
       showModal: false,
-      firstname: '',
-      lastname: '',
-      username: '',
-      email: '',
-      password: ''
     }
   },
   open: function(){
@@ -76,20 +72,7 @@ var Header = React.createClass({
             <Modal.Title>Login Now To Start Creating And Saving Recipes</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <form onSubmit={this.signup}>
-              <Input type="text" placeholder="First Name"
-                valueLink={this.linkState('firstname')} block />
-              <Input type="text" placeholder="Last Name"
-                  valueLink={this.linkState('lastname')} block />
-              <Input type="text" placeholder="Username"
-                valueLink={this.linkState('username')} block />
-              <Input type="email" placeholder="Email"
-                  valueLink={this.linkState('email')} block />
-                <Input type="password" placeholder="Password"
-                  valueLink={this.linkState('password')} block />
-                <ButtonInput type="submit" block value="Signup Now"
-              bsStyle="success" />
-            </form>
+            <LoginForm />
           </Modal.Body>
         </Modal>
       </div>
