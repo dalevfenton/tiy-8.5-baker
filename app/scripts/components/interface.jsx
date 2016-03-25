@@ -2,7 +2,7 @@ var React = require('react');
 
 var Header = require('./header.jsx');
 var Sidebar = require('./sidebar.jsx');
-
+var NewRecipe = require('./newrecipe.jsx');
 
 var Interface = React.createClass({
   getInitialState: function(){
@@ -34,9 +34,7 @@ var Interface = React.createClass({
     }else if(this.state.router.current == 'new'){
       //new recipe form
       body = (
-        <div>
-          <h1>New Recipe</h1>
-        </div>
+        <NewRecipe />
       );
     }else if(this.state.router.current == 'preview'){
       //recipe view screen

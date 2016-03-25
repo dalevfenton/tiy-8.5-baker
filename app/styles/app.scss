@@ -1,6 +1,5 @@
-
 // Bootstrap Variables
-$icon-font-path: '../../node_modules/bootstrap-sass/assets/fonts/bootstrap/';
+$icon-font-path: '../fonts/';
 
 // Import Bootstrap
 @import '../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap';
@@ -14,4 +13,35 @@ $icon-font-path: '../../node_modules/bootstrap-sass/assets/fonts/bootstrap/';
 
 img {
   max-width: 100%;
+}
+.form-control{
+  font-size: 10px;
+}
+input[type="file"]{
+  display: none;
+}
+.fileblock{
+  width: 100%;
+  max-height: 150px;
+  padding-bottom: 100%;
+  background: rgba(0,0,0,.5);
+  border-radius: 5px;
+}
+.title-chiron{
+  margin-bottom: 10px;
+}
+.title-chiron-title{
+  float: left;
+  padding-right: 10px;
+}
+.title-chiron-link{
+  float: right;
+  padding-left: 10px;
+}
+.title-chiron-border{
+  content: '';
+  width: auto;
+  overflow: hidden;
+  border-bottom: 1px solid black;
+  padding-top: 14px;
 }
