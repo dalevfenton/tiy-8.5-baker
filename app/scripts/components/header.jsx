@@ -14,35 +14,65 @@ var Header = React.createClass({
 
   getInitialState: function(){
     return {
-      showModal: false,
+      showModal: this.props.modal,
     }
   },
-  open: function(){
-     this.setState({ showModal: true });
+  componentWillMount: function(){
+    console.log(this.state.showModal);
+    if(this.state.showModal){
+      this.open();
+    }else{
+      this.close();
+    }
+  },
+  open: function(e){
+    e.preventDefault();
+   this.setState({ showModal: true });
   },
   close: function(){
-     this.setState({ showModal: false });
+   this.setState({ showModal: false });
   },
   signup: function(e){
     e.preventDefault();
     console.log(this.state);
   },
+  logout: function(e){
+    e.preventDefault();
+    console.log('logout called');
+    this.props.logout();
+  },
   render: function(){
+    console.log(this.props.user);
     var page = '#';
     var loginProfile;
     if(this.props.user){
       loginProfile = (
-        <NavItem eventKey={2} href="#profile">
-          <Glyphicon glyph="user" />
-          <span className="menu-name">Your Profile</span>
-        </NavItem>
+        <Nav pullRight>
+          <NavItem eventKey={1} href="#new-recipe">
+            <Glyphicon glyph="plus" />
+            <span className="menu-name">New Recipe</span>
+          </NavItem>
+          <NavItem eventKey={2} href="#profile">
+            <Glyphicon glyph="user" />
+            <span className="menu-name">Your Profile</span>
+          </NavItem>
+          <NavItem eventKey={3} href="#" onClick={this.logout}>
+            <span className="menu-name">Log Out</span>
+          </NavItem>
+        </Nav>
       );
     }else{
       loginProfile = (
-        <Navbar.Text onClick={this.open}>
-          Login
-          <Glyphicon glyph="chevron-right" />
-        </Navbar.Text>
+        <Nav pullRight>
+          <NavItem eventKey={1} href="#new-recipe">
+            <Glyphicon glyph="plus" />
+            <span className="menu-name">New Recipe</span>
+          </NavItem>
+          <NavItem onClick={this.open}>
+            Login
+            <Glyphicon glyph="chevron-right" />
+          </NavItem>
+        </Nav>
       );
     }
     return (
@@ -58,13 +88,7 @@ var Header = React.createClass({
             <Nav pullLeft>
               <NavItem href={page}><em>The kitchen is yours, chef!</em></NavItem>
             </Nav>
-            <Nav pullRight>
-              <NavItem eventKey={1} href="#new-recipe">
-                <Glyphicon glyph="plus" />
-                <span className="menu-name">New Recipe</span>
-              </NavItem>
-              {loginProfile}
-            </Nav>
+            {loginProfile}
           </Navbar.Collapse>
         </Navbar>
         <Modal show={this.state.showModal} onHide={this.close}>
