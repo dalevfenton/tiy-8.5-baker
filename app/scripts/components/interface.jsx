@@ -18,7 +18,7 @@ var Interface = React.createClass({
       error: null
     }
   },
-  newRecipe: function(recipeObj){
+  newRecipe: function(recipeObj ){
     recipeObj.author = this.state.user.id;
     var Recipe = Parse.Object.extend("Recipe");
     var newRecipe = new Recipe(recipeObj);
@@ -89,6 +89,7 @@ var Interface = React.createClass({
     if (currentUser) {
         // do stuff with the user
         this.setState({'user': currentUser});
+        console.log(currentUser.get('firstname'));
         // var query = new Parse.Query(currentUser.className);
         // query.get(currentUser.id, {
         //   success: function(object) {
