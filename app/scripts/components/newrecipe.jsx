@@ -19,7 +19,6 @@ var NewRecipe = React.createClass({
   getInitialState: function(){
     return {
       title: '',
-      user: '',
       pubpriv: 'public',
       recipeType: '',
       prepTime: '',
