@@ -11,39 +11,8 @@ var ButtonInput = require('react-bootstrap').ButtonInput;
 var LoginForm = require('./loginform.jsx');
 
 var Header = React.createClass({
-
-  getInitialState: function(){
-    return {
-      showModal: this.props.modal,
-    }
-  },
-  componentWillMount: function(){
-    console.log(this.state.showModal);
-    if(this.state.showModal){
-      this.open();
-    }else{
-      this.close();
-    }
-  },
-  open: function(e){
-    e.preventDefault();
-   this.setState({ showModal: true });
-  },
-  close: function(){
-   this.setState({ showModal: false });
-  },
-  signup: function(e){
-    e.preventDefault();
-    console.log(this.state);
-  },
-  logout: function(e){
-    e.preventDefault();
-    console.log('logout called');
-    this.props.logout();
-  },
   render: function(){
-    console.log(this.props.user);
-    var page = '#';
+    var page = this.props.page;
     var loginProfile;
     if(this.props.user){
       loginProfile = (
@@ -56,7 +25,7 @@ var Header = React.createClass({
             <Glyphicon glyph="user" />
             <span className="menu-name">Your Profile</span>
           </NavItem>
-          <NavItem eventKey={3} href="#" onClick={this.logout}>
+          <NavItem eventKey={3} href="#" onClick={this.props.logout}>
             <span className="menu-name">Log Out</span>
           </NavItem>
         </Nav>
@@ -68,7 +37,7 @@ var Header = React.createClass({
             <Glyphicon glyph="plus" />
             <span className="menu-name">New Recipe</span>
           </NavItem>
-          <NavItem onClick={this.open}>
+          <NavItem onClick={this.props.open}>
             Login
             <Glyphicon glyph="chevron-right" />
           </NavItem>
@@ -91,7 +60,7 @@ var Header = React.createClass({
             {loginProfile}
           </Navbar.Collapse>
         </Navbar>
-        <Modal show={this.state.showModal} onHide={this.close}>
+        <Modal show={this.props.modal} onHide={this.props.close}>
           <Modal.Header closeButton>
             <Modal.Title>Login Now To Start Creating And Saving Recipes</Modal.Title>
           </Modal.Header>

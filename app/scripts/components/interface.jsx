@@ -23,6 +23,7 @@ var Interface = React.createClass({
     //make sure we have a user to set on the object
     if(Parse.User.current()){
       //set the author's id to the recipeObj since it was not held by the form
+      console.log(this.state.user);
       recipeObj.authorId = this.state.user.id;
       recipeObj.authorName = this.state.user.get('firstname') + ' ' + this.state.user.get('lastname');
       //define our constructors for the classes included in a recipe
@@ -49,7 +50,7 @@ var Interface = React.createClass({
       var recipeId;
       newRecipe.save(null).then(function(recipe) {
         // the recipe listing was saved.
-        console.log(recipe);
+        console.log('recipe top level object was saved', recipe);
         recipeId = recipe.id;
         var promises = [];
         _.each(recipeObj.steps, function(stepData){
@@ -65,24 +66,18 @@ var Interface = React.createClass({
       }).then(function(steps) {
         // steps should be an array with the step Ids and other object properties
         var promises = [];
-        console.log(steps);
         _.each(recipeObj.steps, function(stepData, stepIndex){
-          console.log(stepData);
-          console.log(stepIndex);
           _.each(stepData.ingredients, function(ingredient){
             var ingredient = new Ingredient(ingredient);
             ingredient.set("parent", steps[stepIndex].id );
             ingredient.setACL(acl);
-            console.log(ingredient);
             promises.push(ingredient.save());
           });
         });
         return Parse.Promise.when(promises);
       }).then(function(ingredients){
         //this should return the array of ingredient objects
-        console.log(recipeId);
-        console.log('ingredients returned: ', ingredients);
-        // Execute any logic that should take place after the object is saved.
+        //redirect to the recipe's detail view page
         var nav = 'recipe/' + recipeId;
         Backbone.history.navigate(nav, {trigger:true});
       }, function(error) {
@@ -100,12 +95,12 @@ var Interface = React.createClass({
     user.set("email", userObj.email);
     user.set("firstname", userObj.firstname);
     user.set("lastname", userObj.lastname);
-    user.setACL(new Parse.ACL(user));
+    // user.setACL(new Parse.ACL(user));
     user.signUp(null, {
       success: function(user) {
         // Hooray! Let them use the app now.
-        this.setState({user: user.id});
-        Backbone.history.navigate('', {trigger: true});
+        this.setState({user: user, modalToggle: false});
+        // Backbone.history.navigate('', {trigger: true});
       }.bind(this),
       error: function(user, error) {
         // Show the error message somewhere and let the user try again.
@@ -120,8 +115,9 @@ var Interface = React.createClass({
         // Do stuff after successful login.
         console.log('successful login', user);
         //set user into state
-        this.setState({user: user.id});
-        Backbone.history.navigate('', {trigger: true});
+        this.setState({user: user, modalToggle: false});
+        this.forceUpdate();
+        // Backbone.history.navigate('', {trigger: true});
       }.bind(this),
       error: function(user, error) {
         // The login failed. Check error to see why.
@@ -131,8 +127,10 @@ var Interface = React.createClass({
       }
     });
   },
-  logout: function(){
+  logout: function(e){
+    e.preventDefault();
     Parse.User.logOut().then(function(data, code, xhr){
+      console.log('logout called successfully');
       this.setState({'user': null});
     }.bind(this));
   },
@@ -150,6 +148,13 @@ var Interface = React.createClass({
   },
   componentWillUnmount: function(){
     this.state.router.off('route', this.callback);
+  },
+  modalOpen: function(e){
+    e.preventDefault();
+   this.setState({ modalToggle: true });
+  },
+  modalClose: function(){
+   this.setState({ modalToggle: false });
   },
   render: function(){
     var body;
@@ -200,7 +205,8 @@ var Interface = React.createClass({
         <div className="container-fluid">
             <Header page={this.state.router.current} user={this.state.user}
               signUp={this.signUp} login={this.login} logout={this.logout}
-              modal={this.state.modalToggle}/>
+              modal={this.state.modalToggle} open={this.modalOpen}
+              close={this.modalClose} />
         </div>
         <div className="container-fluid">
           <div className="row">

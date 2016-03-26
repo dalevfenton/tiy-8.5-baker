@@ -25,6 +25,7 @@ var Recipe = React.createClass({
     var Ingredient = Parse.Object.extend("Ingredient");
 
     var recipe, steps;
+    console.log(this.props.user);
     var query = new Parse.Query(Recipe);
     query.get(this.props.id).then(function(recipeObj) {
       // the recipe listing was retrieved
@@ -95,14 +96,14 @@ var Recipe = React.createClass({
 
       //add an edit button if the user is the owner of the recipe-title
       var edit = '';
-      if(this.props.user.id === recipe.get('author')){
+      if(this.props.user && this.props.user.id === recipe.get('authorId')){
         edit = (<Button onClick={this.props.editRecipe}>Edit This Recipe</Button>)
       }
       //set the display so we can return it
       display = (
         <div>
           <h1 className="recipe-title">{recipe.get('title')}</h1>
-          <h3 className="recipe-author">{recipe.get('author')}</h3>
+          <h3 className="recipe-author">by {recipe.get('authorName')}</h3>
           <ul>
             <li>Recipe Type: {recipe.get('recipeType')}</li>
             <li>Prep Time: {recipe.get('prepTime')} minutes</li>

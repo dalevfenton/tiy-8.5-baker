@@ -69,7 +69,7 @@ var LoginForm = React.createClass({
             valueLink={this.linkState('username')} block />
           <Input type="password" placeholder="Password"
             valueLink={this.linkState('password')} block />
-          <ButtonInput type="submit" block value="Signup Now"
+          <ButtonInput type="submit" block value="Login"
             bsStyle="success" />
         </form>
       );
