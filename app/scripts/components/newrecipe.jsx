@@ -63,6 +63,18 @@ var NewRecipe = React.createClass({
     var steps = this.state.steps.map(function(step, index){
       return <Step step={step} index={index} key={index} />
     });
+    var button;
+    if(this.props.user){
+      button = (
+        <ButtonInput type="submit" block value="Save This Recipe!"
+          bsStyle="success" />
+      );
+    }else{
+      button = (
+        <ButtonInput type="button" block value="Login To Save Your Recipe"
+          bsStyle="success" onClick={this.props.modalOpen} />
+      );
+    }
     return (
       <div>
         <Panel header="Add A New Recipe">
@@ -140,8 +152,8 @@ var NewRecipe = React.createClass({
                   valueLink={this.linkState('notes')} />
               </div>
             </div>
-            <ButtonInput type="submit" block value="Save This Recipe!"
-              bsStyle="success" />
+            {button}
+
           </form>
         </Panel>
       </div>

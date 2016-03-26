@@ -5,11 +5,16 @@ var Parse = require('parse');
 Parse.initialize("dvf_tiy_gvl");
 Parse.serverURL = 'http://tiy-parse-server.herokuapp.com';
 
+
 var Header = require('./header.jsx');
 var Sidebar = require('./sidebar.jsx');
 var NewRecipe = require('./newrecipe.jsx');
 var Recipe = require('./recipe.jsx');
+var Home = require('./home.jsx');
 
+
+var userList = ['user', 'public', 'popular', 'favorite'];
+var anonList = ['public', 'popular', 'breakfast', 'lunch', 'dinner', 'dessert', 'appetizer'];
 var Interface = React.createClass({
   getInitialState: function(){
     return {
@@ -19,13 +24,15 @@ var Interface = React.createClass({
       error: null
     }
   },
-  newRecipe: function(recipeObj ){
+  newRecipe: function( recipeObj ){
     //make sure we have a user to set on the object
     if(Parse.User.current()){
       //set the author's id to the recipeObj since it was not held by the form
       console.log(this.state.user);
       recipeObj.authorId = this.state.user.id;
-      recipeObj.authorName = this.state.user.get('firstname') + ' ' + this.state.user.get('lastname');
+      recipeObj.authorName = this.state.user.get('firstname')
+                            + ' ' + this.state.user.get('lastname');
+
       //define our constructors for the classes included in a recipe
       var Recipe = Parse.Object.extend("Recipe");
       var Step = Parse.Object.extend("Step");
@@ -70,6 +77,7 @@ var Interface = React.createClass({
           _.each(stepData.ingredients, function(ingredient){
             var ingredient = new Ingredient(ingredient);
             ingredient.set("parent", steps[stepIndex].id );
+            ingredient.set("grandparent", recipeId );
             ingredient.setACL(acl);
             promises.push(ingredient.save());
           });
@@ -143,7 +151,6 @@ var Interface = React.createClass({
     if (currentUser) {
       // do stuff with the user
       this.setState({'user': currentUser});
-      console.log(currentUser.get('firstname'));
     }
   },
   componentWillUnmount: function(){
@@ -158,18 +165,22 @@ var Interface = React.createClass({
   },
   render: function(){
     var body;
-
+    var types;
+    if(this.state.user){
+      types = userList;
+    }else{
+      types = anonList;
+    }
     if(this.state.router.current == 'home'){
       //home screen
       body = (
-        <div>
-          <h1>Home Page</h1>
-        </div>
+        <Home types={types} user={this.state.user} />
       );
     }else if(this.state.router.current == 'new'){
       //new recipe form
       body = (
-        <NewRecipe newRecipe={this.newRecipe}/>
+        <NewRecipe user={this.state.user} newRecipe={this.newRecipe}
+          modalOpen={this.modalOpen} />
       );
     }else if(this.state.router.current == 'recipe'){
       //new recipe form
@@ -210,7 +221,8 @@ var Interface = React.createClass({
         </div>
         <div className="container-fluid">
           <div className="row">
-            <Sidebar page={this.state.router.current} />
+            <Sidebar page={this.state.router.current} user={this.state.user}
+              types={types} />
             <div className="col-sm-10">
               {body}
             </div>

@@ -6,7 +6,7 @@ var Router = Backbone.Router.extend({
       'login': 'login',
       'new-recipe': 'newRecipe',
       'recipe/:id': 'recipe',
-      'recipe-preview': 'preview',
+      'type/:type': 'type',
       'profile': 'profile',
       '*notFound': 'catch'
     },
@@ -20,11 +20,12 @@ var Router = Backbone.Router.extend({
       this.current = 'recipe';
       this.recipeId = id;
     },
+    type: function(type){
+      this.current = 'type';
+      this.typeName = type;
+    },
     newRecipe: function(){
       this.current = 'new';
-    },
-    preview: function(){
-      this.current = 'preview';
     },
     profile: function(){
       this.current = 'profile';
