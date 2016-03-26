@@ -54,7 +54,7 @@ var Interface = React.createClass({
         _.each(recipeObj.steps, function(stepData){
           var step = new Step();
           step.set("directions", stepData.directions);
-          step.set("index", stepData.stepNum);
+          step.set("index", stepData.index);
           step.set("parent", recipe.id);
           step.setACL(acl);
           promises.push(step.save());
@@ -63,13 +63,14 @@ var Interface = React.createClass({
         return Parse.Promise.when(promises);
       }).then(function(steps) {
         // steps should be an array with the step Ids and other object properties
-        _.each(steps, function(step){
-          console.log(step.attributes);
-        });
         var promises = [];
-        _.each(recipeObj.steps, function(stepData){
+        console.log(steps);
+        _.each(recipeObj.steps, function(stepData, stepIndex){
+          console.log(stepData);
+          console.log(stepIndex);
           _.each(stepData.ingredients, function(ingredient){
             var ingredient = new Ingredient(ingredient);
+            ingredient.set("parent", steps[stepIndex].id );
             ingredient.setACL(acl);
             console.log(ingredient);
             promises.push(ingredient.save());
@@ -81,8 +82,8 @@ var Interface = React.createClass({
         console.log(recipeId);
         console.log('ingredients returned: ', ingredients);
         // Execute any logic that should take place after the object is saved.
-        // var nav = 'recipe/' + recipeId;
-        // Backbone.history.navigate(nav, {trigger:true});
+        var nav = 'recipe/' + recipeId;
+        Backbone.history.navigate(nav, {trigger:true});
       }, function(error) {
         // there was some error.
         console.log('error happened: ', error);
