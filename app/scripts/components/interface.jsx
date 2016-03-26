@@ -23,7 +23,8 @@ var Interface = React.createClass({
     //make sure we have a user to set on the object
     if(Parse.User.current()){
       //set the author's id to the recipeObj since it was not held by the form
-      recipeObj.author = this.state.user.id;
+      recipeObj.authorId = this.state.user.id;
+      recipeObj.authorName = this.state.user.get('firstname') + ' ' + this.state.user.get('lastname');
       //define our constructors for the classes included in a recipe
       var Recipe = Parse.Object.extend("Recipe");
       var Step = Parse.Object.extend("Step");
@@ -142,27 +143,15 @@ var Interface = React.createClass({
     this.state.router.on('route', this.callback);
     var currentUser = Parse.User.current();
     if (currentUser) {
-        // do stuff with the user
-        this.setState({'user': currentUser});
-        console.log(currentUser.get('firstname'));
-        // var query = new Parse.Query(currentUser.className);
-        // query.get(currentUser.id, {
-        //   success: function(object) {
-        //     // object is an instance of Parse.Object.
-        //     console.log('success user object: ', object);
-        //   },
-        //
-        //   error: function(object, error) {
-        //     // error is an instance of Parse.Error.
-        //   }
-        // });
+      // do stuff with the user
+      this.setState({'user': currentUser});
+      console.log(currentUser.get('firstname'));
     }
   },
   componentWillUnmount: function(){
     this.state.router.off('route', this.callback);
   },
   render: function(){
-    console.log(this.state.router);
     var body;
 
     if(this.state.router.current == 'home'){
@@ -180,7 +169,8 @@ var Interface = React.createClass({
     }else if(this.state.router.current == 'recipe'){
       //new recipe form
       body = (
-        <Recipe id={this.state.router.recipeId} editRecipe={this.editRecipe}/>
+        <Recipe id={this.state.router.recipeId} editRecipe={this.editRecipe}
+          user={this.state.user} />
       );
     }else if(this.state.router.current == 'preview'){
       //recipe view screen

@@ -2,7 +2,12 @@ var React = require('react');
 var Parse = require('parse');
 var _ = require('underscore');
 
+var CardIngredient = require('./cardingredient.jsx');
+var RecipeDetailStep = require('./recipedetailstep.jsx');
+var TitleChiron = require('./titlechiron.jsx');
+
 var Panel = require('react-bootstrap').Panel;
+var Table = require('react-bootstrap').Table;
 var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
@@ -46,9 +51,9 @@ var Recipe = React.createClass({
       })
       //set the steps on the recipe
       recipe.set("steps", steps);
-      console.log('should be the recipe with steps and ingredients set');
-      console.log(recipe);
-      console.log(recipe.attributes);
+      // console.log('should be the recipe with steps and ingredients set');
+      // console.log(recipe);
+      // console.log(recipe.attributes);
       //set the recipe to state and update our view
       this.setState({'recipeObj': recipe});
     }.bind(this),function(error){
@@ -57,18 +62,43 @@ var Recipe = React.createClass({
 
   },
   render: function(){
-    var display = ( <div>Hi</div>);
+    var display = ( <div>Show Loading Graphic</div>);
 
     if(this.state.recipeObj){
+      //only render the detail view if we have our recipe retrieved from the server
       console.log('recipeObj is defined!');
       console.log(this.state.recipeObj.attributes);
-      // var atts = this.state.recipeObj.attributes.map(function(att){
-      //   console.log('inside atts');
-      //   return ( <li key={this}>{att}</li> );
-      // });
+
       var recipe = this.state.recipeObj;
+      //convert tempScale index value to string for display
       var tempScale = ["F", "C"][recipe.get("tempScale")];
 
+      //massage the recipe object data to pull out the ingredients and set them
+      //into individual components for use on recipe card panel
+      var ingredients = recipe.get("steps").reduce(function(memo, step){
+        _.each(step.get('ingredients'), function(ingredient){
+          //we really need to do a check if this ingredient exists in the array
+          //and combine the amounts if so
+          memo.push(ingredient);
+          // memo[ingredient.get('ingredient')] = ingredient;
+        });
+        return memo;
+      }, []);
+      ingredients = ingredients.map(function(ingredient){
+        return ( <CardIngredient data={ingredient.attributes} key={ingredient.id} /> );
+      });
+
+      //build the step display items
+      var steps = recipe.get("steps").map(function(step){
+        return (<RecipeDetailStep data={step.attributes} key={step.id} /> );
+      });
+
+      //add an edit button if the user is the owner of the recipe-title
+      var edit = '';
+      if(this.props.user.id === recipe.get('author')){
+        edit = (<Button onClick={this.props.editRecipe}>Edit This Recipe</Button>)
+      }
+      //set the display so we can return it
       display = (
         <div>
           <h1 className="recipe-title">{recipe.get('title')}</h1>
@@ -79,21 +109,30 @@ var Recipe = React.createClass({
             <li>Cook Time: {recipe.get('cookTime')} minutes</li>
             <li>Cook Temp: {recipe.get('temp')} &deg;{tempScale}</li>
           </ul>
-          <Panel>
+          <Panel header={
             <div>
-              <span className="servings">{recipe.get('servings')} Servings</span>
+              <span className="servings">
+                {recipe.get('servings')} Servings
+              </span>
               <Button onClick={this.triggerConversion} pullRight>
                 <Glyphicon glyph="pencil" />Adjust
               </Button>
-            </div>
-            <div>
-
-            </div>
+            </div> } >
+            <Table striped responsive hover>
+              <tbody>
+                {ingredients}
+              </tbody>
+            </Table>
           </Panel>
+          {steps}
+          <TitleChiron title="Personal Notes" />
+          <div>
+            {recipe.get("notes")}
+          </div>
+          {edit}
         </div>
       );
     }
-    console.log(this.state.recipeObj);
     return (
       <div>
         {display}
