@@ -12,8 +12,7 @@ var RecipeStep = React.createClass({
   getInitialState: function(){
     return {
       ingredients: [],
-      directions: '',
-      stepNum: this.props.index
+      directions: ''
     }
   },
   addIngredient: function(ingredientObj){
@@ -23,7 +22,9 @@ var RecipeStep = React.createClass({
   },
   handleSubmit: function(e){
     e.preventDefault();
-    this.props.addStep( this.state );
+    var step = this.state;
+    step.index = this.props.index;
+    this.props.addStep( step );
     this.setState({
       ingredients: [],
       directions: ''

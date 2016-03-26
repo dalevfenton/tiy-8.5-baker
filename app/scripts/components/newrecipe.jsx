@@ -38,6 +38,7 @@ var NewRecipe = React.createClass({
   },
   addStep: function(stepObj){
     var steps = this.state.steps;
+    console.log(stepObj);
     steps.push(stepObj);
     this.setState({'steps': steps});
   },

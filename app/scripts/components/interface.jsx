@@ -78,53 +78,15 @@ var Interface = React.createClass({
         return Parse.Promise.when(promises);
       }).then(function(ingredients){
         //this should return the array of ingredient objects
+        console.log(recipeId);
         console.log('ingredients returned: ', ingredients);
         // Execute any logic that should take place after the object is saved.
-        console.log('New object created with objectId: ' + recipe.id);
-        console.log(recipeId);
-        // var nav = 'recipe/' + recipe.id;
+        // var nav = 'recipe/' + recipeId;
         // Backbone.history.navigate(nav, {trigger:true});
       }, function(error) {
         // there was some error.
         console.log('error happened: ', error);
       });
-
-
-      // recipeObj.steps.forEach(function(stepData){
-      //   var step = new Step();
-      //   step.set("directions", stepData.directions);
-      //   step.set("parent", object.id);
-      //   step.save(null).then(
-      //     function(object) {
-      //       // the object was saved.
-      //     },
-      //     function(error) {
-      //       // saving the object failed.
-      //     });
-      //   )
-      //   stepArray.push(step);
-      //   stepData.ingredients.forEach(function(ingredientData){
-      //     var ingredient = new Ingredient(ingredientData);
-      //     ingredient.set("parent", step);
-      //     ingredientArray.push(ingredient);
-      //     ingredient.save();
-      //   });
-      // });
-      // console.log('stepArray: ', stepArray);
-      // console.log('ingredientArray: ', ingredientArray );
-      // newRecipe.save(null, {
-      //   success: function(recipe) {
-      //     // Execute any logic that should take place after the object is saved.
-      //     console.log('New object created with objectId: ' + recipe.id);
-      //     var nav = 'recipe/' + recipe.id;
-      //     Backbone.history.navigate(nav, {trigger:true});
-      //   },
-      //   error: function(recipe, error) {
-      //     // Execute any logic that should take place if the save fails.
-      //     // error is a Parse.Error with an error code and message.
-      //     console.log('Failed to create new object, with error: ' + error);
-      //   }
-      // });
     }else{
       console.log('no user logged in, redirect to login before posting recipe');
     }
