@@ -1,26 +1,32 @@
+//3rd party libs & frameworks
 var React = require('react');
 var Backbone = require('backbone');
 var _ = require('underscore');
 var Parse = require('parse');
+
+//setup parse SDK to connect to server
 Parse.initialize("dvf_tiy_gvl");
 Parse.serverURL = 'http://tiy-parse-server.herokuapp.com';
 
-
+//require in child components
 var Header = require('./header.jsx');
 var Sidebar = require('./sidebar.jsx');
 var NewRecipe = require('./newrecipe.jsx');
 var Recipe = require('./recipe.jsx');
 var Home = require('./home.jsx');
+var Profile = require('./profile.jsx');
 
-
+//lists used to populate sidebar & home screens
 var userList = ['user', 'public', 'popular', 'favorite'];
 var anonList = ['public', 'popular', 'breakfast', 'lunch', 'dinner', 'dessert', 'appetizer'];
+
 var Interface = React.createClass({
   getInitialState: function(){
     return {
       router: this.props.router,
       user: null,
       modalToggle: false,
+      //don't think we actually used error anywhere
       error: null
     }
   },
@@ -58,6 +64,8 @@ var Interface = React.createClass({
       newRecipe.save(null).then(function(recipe) {
         // the recipe listing was saved.
         console.log('recipe top level object was saved', recipe);
+        // save recipeId into outer scope so we can reference it again
+        // when saving child and granchild elements
         recipeId = recipe.id;
         var promises = [];
         _.each(recipeObj.steps, function(stepData){
@@ -68,10 +76,10 @@ var Interface = React.createClass({
           step.setACL(acl);
           promises.push(step.save());
         });
-        // Return a new promise that is resolved when all of the deletes are finished.
+        // return another list of promises to resolve when the saves are finished
         return Parse.Promise.when(promises);
       }).then(function(steps) {
-        // steps should be an array with the step Ids and other object properties
+        // steps should be an array with Step class objects
         var promises = [];
         _.each(recipeObj.steps, function(stepData, stepIndex){
           _.each(stepData.ingredients, function(ingredient){
@@ -82,6 +90,7 @@ var Interface = React.createClass({
             promises.push(ingredient.save());
           });
         });
+        // return another list of promises to resolve when ingredients are saved
         return Parse.Promise.when(promises);
       }).then(function(ingredients){
         //this should return the array of ingredient objects
@@ -183,24 +192,15 @@ var Interface = React.createClass({
           modalOpen={this.modalOpen} />
       );
     }else if(this.state.router.current == 'recipe'){
-      //new recipe form
+      //single recipe detail page
       body = (
         <Recipe id={this.state.router.recipeId} editRecipe={this.editRecipe}
           user={this.state.user} />
       );
-    }else if(this.state.router.current == 'preview'){
-      //recipe view screen
-      body = (
-        <div>
-          <h1>Preview</h1>
-        </div>
-      );
     }else if(this.state.router.current == 'profile'){
-      //recipe view screen
+      //user profile screen
       body = (
-        <div>
-          <h1>Profile</h1>
-        </div>
+        <Profile user={this.state.user} />
       );
     }else{
       body = (
