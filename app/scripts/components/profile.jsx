@@ -8,6 +8,12 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 
 var TitleChiron = require('./titlechiron.jsx');
 
+var UserRecipe = React.createClass({
+  render: function(){
+
+  }
+});
+
 var UserRecipes = React.createClass({
   getInitialState: function(){
     return {
@@ -32,22 +38,27 @@ var UserRecipes = React.createClass({
     if(this.state.recipes){
       recipes = this.state.recipes.map(function(recipe){
         return (
-          <tr key={recipe.id}>
-            <td>Title</td>
-            <td>Type</td>
-          </tr>
+          <li key={recipe.id} className="row">
+            <div className="col-sm-6">
+              <span>{recipe.get('title')}</span>
+            </div>
+            <div className="col-sm-2">
+              <span>{recipe.get('recipeType')}</span>
+            </div>
+            <div className="col-sm-2">
+              <span><a href={"#recipe-edit/" + recipe.id } className="btn btn-primary">Edit</a></span>
+            </div>
+            <div className="col-sm-2">
+              <span><a href={"#recipe-delete/" + recipe.id } className="btn btn-error">Delete</a></span>
+            </div>
+          </li>
         );
       });
     }
     return (
-      <Table striped responsive hover>
-        <tbody>
-          <tr>
-            <td>Title</td>
-            <td>Type</td>
-          </tr>
-        </tbody>
-      </Table>
+      <ul className="profile-recipe">
+        {recipes}
+      </ul>
     );
   }
 });
@@ -62,15 +73,19 @@ var Profile = React.createClass({
           <TitleChiron title="Your Information" />
           <div className="row">
             <div className="col-sm-6">
+              <div className="user-info user-label">First Name:</div>
               <div className="user-info">{user.firstname}</div>
             </div>
             <div className="col-sm-6">
+              <div className="user-info user-label">Last Name:</div>
               <div className="user-info">{user.lastname}</div>
             </div>
             <div className="col-sm-6">
+              <div className="user-info user-label">Username:</div>
               <div className="user-info">{user.username}</div>
             </div>
             <div className="col-sm-6">
+              <div className="user-info user-label">Email:</div>
               <div className="user-info">{user.email}</div>
             </div>
             <div className="col-sm-12">

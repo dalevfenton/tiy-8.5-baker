@@ -6,6 +6,8 @@ var Router = Backbone.Router.extend({
       'login': 'login',
       'new-recipe': 'newRecipe',
       'recipe/:id': 'recipe',
+      'recipe-edit/:id': 'recipeEdit',
+      'recipe-delete/:id': 'recipeDelete',
       'type/:type': 'type',
       'profile': 'profile',
       '*notFound': 'catch'
@@ -20,12 +22,21 @@ var Router = Backbone.Router.extend({
       this.current = 'recipe';
       this.recipeId = id;
     },
-    type: function(type){
-      this.current = 'type';
-      this.typeName = type;
+    recipeEdit: function(id){
+      this.current = 'recipeEdit';
+      this.recipeId = id;
+    },
+    recipeDelete: function(id){
+      this.current = 'recipeDelete';
+      this.recipeId = id;
     },
     newRecipe: function(){
       this.current = 'new';
+      this.recipeId = null;
+    },
+    type: function(type){
+      this.current = 'type';
+      this.typeName = type;
     },
     profile: function(){
       this.current = 'profile';

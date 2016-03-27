@@ -20,6 +20,28 @@ var RecipeStep = React.createClass({
     curIngredients.push(ingredientObj);
     this.setState({'ingredients': curIngredients });
   },
+  editIngredient: function(ingredientObj, index){
+    var curIngredients = this.state.ingredients;
+    curIngredients[index] = ingredientObj;
+    this.setState({'ingredients': curIngredients });
+  },
+  componentWillMount: function(){
+    if(this.props.step){
+      this.setState({
+        ingredients: this.props.step.ingredients,
+        directions: this.props.step.directions
+      });
+    }
+  },
+  handleEdit: function(e){
+    e.preventDefault();
+    this.props.editStep(this.state, this.props.index);
+    this.props.resetEdit();
+    this.setState({
+      ingredients: [],
+      directions: ''
+    });
+  },
   handleSubmit: function(e){
     e.preventDefault();
     var step = this.state;
@@ -31,12 +53,30 @@ var RecipeStep = React.createClass({
     });
   },
   render: function(){
+    console.log('render called');
     var ingredients = this.state.ingredients.map(function(ingredient, index){
-      return <Ingredient ingredient={ingredient} key={index} />;
-    });
+      return <Ingredient ingredient={ingredient} key={index}
+        index={index} editIngredient={this.editIngredient} />;
+    }.bind(this));
+    var indexDisp;
+    if(this.props.step){
+      indexDisp = this.props.index + 1;
+    }else{
+      indexDisp = this.props.index;
+    }
+    var button;
+    if(this.props.step){
+      button = (
+        <ButtonInput value="Save Your Changes" onClick={this.handleEdit}/>
+      );
+    }else{
+      button = (
+        <ButtonInput value="Add This Step" onClick={this.handleSubmit}/>
+      );
+    }
     return (
       <div className="col-sm-12">
-        <TitleChiron title={"Step " + this.props.index} />
+        <TitleChiron title={"Step " + indexDisp} />
         <IngredientForm addIngredient={this.addIngredient} />
         {ingredients}
         <div className="row">
@@ -47,7 +87,7 @@ var RecipeStep = React.createClass({
         </div>
         <div className="row">
           <div className="col-sm-12">
-            <ButtonInput value="Add Another Step" onClick={this.handleSubmit}/>
+            {button}
           </div>
         </div>
       </div>

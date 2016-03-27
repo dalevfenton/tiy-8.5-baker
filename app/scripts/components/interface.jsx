@@ -30,11 +30,10 @@ var Interface = React.createClass({
       error: null
     }
   },
-  newRecipe: function( recipeObj ){
+  recipeSubmit: function( recipeObj, actionType, recipeRef ){
     //make sure we have a user to set on the object
     if(Parse.User.current()){
       //set the author's id to the recipeObj since it was not held by the form
-      console.log(this.state.user);
       recipeObj.authorId = this.state.user.id;
       recipeObj.authorName = this.state.user.get('firstname')
                             + ' ' + this.state.user.get('lastname');
@@ -55,11 +54,25 @@ var Interface = React.createClass({
         acl.setReadAccess(Parse.User.current().id, true);
         acl.setWriteAccess(Parse.User.current().id, true);
       }
-      //exclude the steps and pubpriv from the recipe item since they are
-      //included as relational data and the ACL respectively
-      var recipeVals = _.omit(recipeObj, ['steps', 'pubpriv']);
-      var newRecipe = new Recipe(recipeVals);
+
+      
+
+      console.log(name);
+      //exclude the steps, picture and pubpriv from the recipe
+      //item since they are included as relational data, a File object
+      //and the ACL respectively
+      var recipeVals = _.omit(recipeObj, ['steps', 'pubpriv', 'picture']);
+      var newRecipe;
+
+      if(recipeRef !== undefined){
+        console.log('recipeRef is defined, do an update');
+        newRecipe = recipeRef;
+        newRecipe.set(recipeVals);
+      }else{
+        newRecipe = new Recipe(recipeVals);
+      }
       newRecipe.setACL(acl);
+
       var recipeId;
       newRecipe.save(null).then(function(recipe) {
         // the recipe listing was saved.
@@ -68,8 +81,14 @@ var Interface = React.createClass({
         // when saving child and granchild elements
         recipeId = recipe.id;
         var promises = [];
-        _.each(recipeObj.steps, function(stepData){
-          var step = new Step();
+        _.each(recipeObj.steps, function(stepData, index){
+          var step;
+          if(recipeRef !== undefined){
+            step = recipeRef.get('steps')[index];
+          }else{
+            step = new Step();
+          }
+          console.log(step);
           step.set("directions", stepData.directions);
           step.set("index", stepData.index);
           step.set("parent", recipe.id);
@@ -82,8 +101,15 @@ var Interface = React.createClass({
         // steps should be an array with Step class objects
         var promises = [];
         _.each(recipeObj.steps, function(stepData, stepIndex){
-          _.each(stepData.ingredients, function(ingredient){
-            var ingredient = new Ingredient(ingredient);
+          _.each(stepData.ingredients, function(ingredient, ingIndex){
+            var ingredient;
+            console.log(ingredient);
+            if(recipeRef !== undefined){
+              ingredient = recipeRef.get('steps')[stepIndex][ingIndex];
+            }else{
+              ingredient = new Ingredient(ingredient);
+            }
+
             ingredient.set("parent", steps[stepIndex].id );
             ingredient.set("grandparent", recipeId );
             ingredient.setACL(acl);
@@ -188,13 +214,25 @@ var Interface = React.createClass({
     }else if(this.state.router.current == 'new'){
       //new recipe form
       body = (
-        <NewRecipe user={this.state.user} newRecipe={this.newRecipe}
-          modalOpen={this.modalOpen} />
+        <NewRecipe user={this.state.user} recipeSubmit={this.recipeSubmit}
+          modalOpen={this.modalOpen} type="new" />
       );
     }else if(this.state.router.current == 'recipe'){
       //single recipe detail page
       body = (
-        <Recipe id={this.state.router.recipeId} editRecipe={this.editRecipe}
+        <Recipe id={this.state.router.recipeId}
+          user={this.state.user} />
+      );
+    }else if(this.state.router.current == 'recipeEdit'){
+      //single recipe detail page
+      body = (
+        <NewRecipe id={this.state.router.recipeId}
+          user={this.state.user} type="edit" recipeSubmit={this.recipeSubmit} />
+      );
+    }else if(this.state.router.current == 'recipeDelete'){
+      //single recipe detail page
+      body = (
+        <RecipeDelete id={this.state.router.recipeId}
           user={this.state.user} />
       );
     }else if(this.state.router.current == 'profile'){

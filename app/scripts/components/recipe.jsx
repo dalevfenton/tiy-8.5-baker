@@ -97,7 +97,7 @@ var Recipe = React.createClass({
       //add an edit button if the user is the owner of the recipe-title
       var edit = '';
       if(this.props.user && this.props.user.id === recipe.get('authorId')){
-        edit = (<Button onClick={this.props.editRecipe}>Edit This Recipe</Button>)
+        edit = (<a href={"#recipe-edit/" + recipe.id} className="btn btn-primary">Edit This Recipe</a>)
       }
       //set the display so we can return it
       display = (
