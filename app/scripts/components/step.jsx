@@ -11,15 +11,28 @@ var Step = React.createClass({
       toggleEdit: false
     }
   },
+  componentWillMount: function(){
+    if(this.props.step){
+      this.setState({
+        ingredients: this.props.step.ingredients,
+        directions: this.props.step.directions
+      });
+    }
+  },
   edit: function(){
     this.setState({toggleEdit: !this.state.toggleEdit});
+  },
+  editIngredient: function(ingredientObj, index){
+    var curIngredients = this.state.ingredients;
+    curIngredients[index] = ingredientObj;
+    this.setState({'ingredients': curIngredients });
   },
   deleteIngredient: function(ingredientObj, index){
     console.log('do the delete');
   },
   render: function(){
     var ingredients = this.props.step.ingredients.map(function(ingredient, index){
-      return <Ingredient ingredient={ingredient} key={index} delete={this.props.deleteIngredient} />;
+      return <Ingredient ingredient={ingredient} key={index} index={index} editIngredient={this.editIngredient} delete={this.props.deleteIngredient} />;
     }.bind(this));
     if(this.state.toggleEdit){
       return (

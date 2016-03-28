@@ -56,12 +56,29 @@ var Recipe = React.createClass({
       // console.log(recipe);
       // console.log(recipe.attributes);
       //set the recipe to state and update our view
-
-      setTimeout(this.setState({'recipeObj': recipe}), 2000);
+      var relation = Parse.User.current().relation("favorites");
+      var query = relation.query();
+      return query.find();
+    }).then(function(favs){
+      var found = _.findWhere(favs, {id: recipe.id});
+      if( found != undefined ){
+        this.setState({'fav': found });
+      }
+      this.setState({'recipeObj': recipe});
     }.bind(this),function(error){
       console.log('error happened', error);
     });
 
+  },
+  favorite: function(){
+      var user = Parse.User.current();
+      var relation = user.relation("favorites");
+      relation.add(this.state.recipeObj);
+      user.save().then(function(user){
+        this.setState({ "fav" : true });
+      }.bind(this),function(error){
+        console.log('error saving favorite:', error);
+      });
   },
   render: function(){
     var display = (
@@ -104,6 +121,13 @@ var Recipe = React.createClass({
       var edit = '';
       if(this.props.user && this.props.user.id === recipe.get('authorId')){
         edit = (<a href={"#recipe-edit/" + recipe.id} className="btn btn-primary pull-right">Edit This Recipe</a>)
+      }
+
+      var fav;
+      if(this.props.user && this.state.fav){
+        fav = ( <span>Favorite! <Glyphicon className="star-pulse-animate" glyph="star-empty" /></span>);
+      }else if(this.props.user){
+        fav = ( <Button onClick={this.favorite}>Add to Favorites</Button>);
       }
       //set the display so we can return it
       display = (
@@ -153,7 +177,7 @@ var Recipe = React.createClass({
             {recipe.get("notes")}
           </div>
           <div className="bottom-button">
-            {edit}
+            {fav}{edit}
           </div>
         </div>
       );

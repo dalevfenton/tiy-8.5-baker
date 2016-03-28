@@ -130,6 +130,20 @@ img {
   to   { transform: scale( 1 ) rotate( 360deg ); }
 }
 
+.star-pulse-animate {
+  // animation-name: pulseThis;
+  // animation-duration: 2s;
+  // animation-iteration-count: infinite;
+  // animation-timing-function: linear;
+  // animation-direction: alternate;
+  // font-size: 24px;
+}
+
+@keyframes pulseThis {
+  from { transform: scale( 1 );   }
+  to   { transform: scale( 1.2 ); }
+}
+
 .recipe-image{
   position: relative;
   .image{

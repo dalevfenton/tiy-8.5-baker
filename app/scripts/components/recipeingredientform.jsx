@@ -23,6 +23,8 @@ var IngredientForm = React.createClass({
   },
   handleEdit: function(e){
     e.preventDefault();
+    console.log(this.state);
+    console.log(this.props.index);
     this.props.editIngredient(this.state, this.props.index);
     this.props.resetEdit();
     this.reset();
@@ -46,7 +48,7 @@ var IngredientForm = React.createClass({
     }
     var button;
     if(this.props.ingredient){
-      button = <ButtonInput value="Save" onClick={this.handleEdit} block />
+      button = <ButtonInput value="Save Edit" onClick={this.handleEdit} block />
     }else{
       button = <ButtonInput value="Save" onClick={this.handleSubmit} block />
     }

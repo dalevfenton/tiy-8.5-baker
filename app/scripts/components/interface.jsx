@@ -57,9 +57,6 @@ var Interface = React.createClass({
         acl.setReadAccess(Parse.User.current().id, true);
         acl.setWriteAccess(Parse.User.current().id, true);
       }
-
-
-
       console.log(name);
       //exclude the steps, picture and pubpriv from the recipe
       //item since they are included as relational data, a File object
@@ -76,13 +73,11 @@ var Interface = React.createClass({
         newRecipe = new Recipe(recipeVals);
       }
       newRecipe.setACL(acl);
-      console.log('recipe before save');
-      console.log(newRecipe);
       var recipeId;
       newRecipe.save(null).then(function(recipe) {
         // the recipe listing was saved.
-        console.log('recipe top level object was saved', recipe);
-        console.log(recipe.attributes);
+        // console.log('recipe top level object was saved', recipe);
+        // console.log(recipe.attributes);
         // save recipeId into outer scope so we can reference it again
         // when saving child and granchild elements
         recipeId = recipe.id;
@@ -94,7 +89,7 @@ var Interface = React.createClass({
           }else{
             step = new Step();
           }
-          console.log(step);
+          // console.log(step);
           step.set("directions", stepData.directions);
           step.set("index", stepData.index);
           step.set("parent", recipe.id);
@@ -109,7 +104,7 @@ var Interface = React.createClass({
         _.each(recipeObj.steps, function(stepData, stepIndex){
           _.each(stepData.ingredients, function(ingredient, ingIndex){
             var ingredient;
-            console.log(ingredient);
+            // console.log(ingredient);
             if(recipeRef !== undefined){
               ingredient = recipeRef.get('steps')[stepIndex][ingIndex];
             }else{
@@ -162,7 +157,6 @@ var Interface = React.createClass({
     Parse.User.logIn(userObj.username, userObj.password, {
       success: function(user) {
         // Do stuff after successful login.
-        console.log('successful login', user);
         //set user into state
         this.setState({user: user, modalToggle: false});
         this.forceUpdate();
@@ -179,7 +173,6 @@ var Interface = React.createClass({
   logout: function(e){
     e.preventDefault();
     Parse.User.logOut().then(function(data, code, xhr){
-      console.log('logout called successfully');
       this.setState({'user': null});
     }.bind(this));
   },
@@ -276,7 +269,7 @@ var Interface = React.createClass({
         <div className="container-fluid">
           <div className="row">
             <div id="footer" >
-              
+
             </div>
           </div>
         </div>

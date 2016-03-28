@@ -20,8 +20,6 @@ var RecipeTypeRow = React.createClass({
       case 'user':
         //set user query
         query.equalTo( "authorId", this.props.user.id );
-        console.log('query for user recipes: ');
-
         break;
       case 'public':
         //set user query
@@ -30,10 +28,11 @@ var RecipeTypeRow = React.createClass({
         //need to keep track of views on objects or something
         break;
       case 'favorite':
-        //need to set favorites on user so that we can look them up here
-        var testFavs = ['uGJRx36SoO'];
+        var relation = Parse.User.current().relation("favorites");
+        query = relation.query();
+        // var testFavs = ['uGJRx36SoO'];
         // query.containedIn( "objectId", this.props.user.favorites );
-        query.containedIn( "objectId", testFavs );
+        // query.containedIn( "objectId", testFavs );
         break;
       default:
         query.equalTo("recipeType", this.props.type.toUpperCase() );
