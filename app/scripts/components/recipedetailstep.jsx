@@ -9,8 +9,9 @@ var RecipeDetailStep = React.createClass({
   render: function(){
     var step = this.props.data;
     var ingredients = step.ingredients.map(function(ingredient){
-      return ( <CardIngredient data={ingredient.attributes} key={ingredient.id} /> );
-    });
+      return ( <CardIngredient data={ingredient.attributes} key={ingredient.id}
+        ratio={this.props.ratio} /> );
+    }.bind(this));
     return (
       <div className="row">
         <div className="col-sm-12">

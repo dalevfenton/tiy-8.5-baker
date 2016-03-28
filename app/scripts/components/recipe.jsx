@@ -10,13 +10,13 @@ var Panel = require('react-bootstrap').Panel;
 var Table = require('react-bootstrap').Table;
 var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
-
+var Input = require('react-bootstrap').Input;
 
 var Recipe = React.createClass({
   getInitialState: function(){
     return {
       recipeObj: null,
-      loaded: false
+      servings: 0
     }
   },
   componentWillMount: function(){
@@ -55,19 +55,32 @@ var Recipe = React.createClass({
       // console.log(recipe);
       // console.log(recipe.attributes);
       //set the recipe to state and update our view
+      console.log('before favs check');
+      //if the user isn't logged in we can't query for favorite status
+      if(!Parse.User.current()){
+        this.setState({'recipeObj': recipe, 'servings': recipe.get('servings')});
+        return 'exiting before relation query';
+      };
       var relation = Parse.User.current().relation("favorites");
       var query = relation.query();
       return query.find();
-    }).then(function(favs){
+    }.bind(this)).then(function(favs){
+      console.log('favs returned');
       var found = _.findWhere(favs, {id: recipe.id});
       if( found != undefined ){
         this.setState({'fav': found });
       }
-      this.setState({'recipeObj': recipe});
+      console.log(recipe.attributes);
+      this.setState({'recipeObj': recipe, 'servings': recipe.get('servings')});
     }.bind(this),function(error){
       console.log('error happened', error);
     });
-
+  },
+  handleServings: function(e){
+    this.setState({"servings": e.target.value});
+  },
+  toggleConversion: function(){
+    this.setState({toggleConversion: !this.state.toggleConversion});
   },
   favorite: function(){
       var user = Parse.User.current();
@@ -107,14 +120,21 @@ var Recipe = React.createClass({
         });
         return memo;
       }, []);
-      ingredients = ingredients.map(function(ingredient){
-        return ( <CardIngredient data={ingredient.attributes} key={ingredient.id} /> );
-      });
+      console.log(this.state.servings);
+      console.log(this.state.recipeObj.get('servings'));
+      console.log( (this.state.servings / this.state.recipeObj.get("servings")) );
+      ingredients = ingredients.map(function(ingredient, index){
+        console.log(ingredient);
+        return ( <CardIngredient data={ingredient.attributes}
+          key={ingredient.id}
+          ratio={(this.state.servings / this.state.recipeObj.get("servings"))} /> );
+      }.bind(this));
 
       //build the step display items
       var steps = recipe.get("steps").map(function(step){
-        return (<RecipeDetailStep data={step.attributes} key={step.id} /> );
-      });
+        return (<RecipeDetailStep data={step.attributes} key={step.id}
+          ratio={(this.state.servings / this.state.recipeObj.get("servings"))} /> );
+      }.bind(this));
 
       //add an edit button if the user is the owner of the recipe-title
       var edit = '';
@@ -129,6 +149,7 @@ var Recipe = React.createClass({
         fav = ( <Button onClick={this.favorite}>Add to Favorites</Button>);
       }
       //set the display so we can return it
+      console.log(this.state);
       display = (
         <div>
           <div className="recipe-image">
@@ -154,15 +175,18 @@ var Recipe = React.createClass({
               </li>
             </ul>
           </div>
-
           <Panel header={
-            <div>
-              <span className="servings">
-                {recipe.get('servings') + " Servings"}
-              </span>
-              <Button onClick={this.triggerConversion} className="pull-right">
-                <Glyphicon glyph="pencil" />Adjust
-              </Button>
+            <div className="row">
+              <div className="col-xs-5">
+                <span className="servings">Adjust Value to Scale Recipe Up or Down</span>
+              </div>
+              <div className="col-xs-2">
+                <Input type="number" onChange={this.handleServings} min={1}
+                  value={this.state.servings} />
+              </div>
+              <div className="col-xs-5">
+                <span className="servings">Servings</span>
+              </div>
             </div> } >
             <Table striped responsive hover>
               <tbody>

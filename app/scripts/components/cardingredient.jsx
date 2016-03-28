@@ -1,15 +1,14 @@
 var React = require('react');
 
 var CardIngredient = React.createClass({
+  scale: function(){
+    return (this.props.data.amount * this.props.ratio);
+  },
   render: function(){
     var ingredient = this.props.data;
-    // console.log(ingredient);
-    // console.log(ingredient.amount);
-    // console.log(ingredient.units);
-    // console.log(ingredient.ingredient);
     return (
       <tr>
-        <td>{ingredient.amount}{ingredient.units}</td>
+        <td>{this.scale()}{" " + ingredient.units}</td>
         <td>{ingredient.ingredient}</td>
       </tr>
     );

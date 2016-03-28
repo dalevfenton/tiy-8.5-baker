@@ -3,15 +3,14 @@
 var React = require('react');
 
 var CardIngredient = React.createClass({displayName: "CardIngredient",
+  scale: function(){
+    return (this.props.data.amount * this.props.ratio);
+  },
   render: function(){
     var ingredient = this.props.data;
-    // console.log(ingredient);
-    // console.log(ingredient.amount);
-    // console.log(ingredient.units);
-    // console.log(ingredient.ingredient);
     return (
       React.createElement("tr", null, 
-        React.createElement("td", null, ingredient.amount, ingredient.units), 
+        React.createElement("td", null, this.scale(), " " + ingredient.units), 
         React.createElement("td", null, ingredient.ingredient)
       )
     );
@@ -115,6 +114,7 @@ var RecipeTypeRow = React.createClass({displayName: "RecipeTypeRow",
     }
   },
   componentWillMount: function(){
+    this.setState({"recipes": null});
     var Recipe = Parse.Object.extend("Recipe");
     var query = new Parse.Query(Recipe)
     query.limit(5);
@@ -988,13 +988,13 @@ var Panel = require('react-bootstrap').Panel;
 var Table = require('react-bootstrap').Table;
 var Button = require('react-bootstrap').Button;
 var Glyphicon = require('react-bootstrap').Glyphicon;
-
+var Input = require('react-bootstrap').Input;
 
 var Recipe = React.createClass({displayName: "Recipe",
   getInitialState: function(){
     return {
       recipeObj: null,
-      loaded: false
+      servings: 0
     }
   },
   componentWillMount: function(){
@@ -1033,19 +1033,32 @@ var Recipe = React.createClass({displayName: "Recipe",
       // console.log(recipe);
       // console.log(recipe.attributes);
       //set the recipe to state and update our view
+      console.log('before favs check');
+      //if the user isn't logged in we can't query for favorite status
+      if(!Parse.User.current()){
+        this.setState({'recipeObj': recipe, 'servings': recipe.get('servings')});
+        return 'exiting before relation query';
+      };
       var relation = Parse.User.current().relation("favorites");
       var query = relation.query();
       return query.find();
-    }).then(function(favs){
+    }.bind(this)).then(function(favs){
+      console.log('favs returned');
       var found = _.findWhere(favs, {id: recipe.id});
       if( found != undefined ){
         this.setState({'fav': found });
       }
-      this.setState({'recipeObj': recipe});
+      console.log(recipe.attributes);
+      this.setState({'recipeObj': recipe, 'servings': recipe.get('servings')});
     }.bind(this),function(error){
       console.log('error happened', error);
     });
-
+  },
+  handleServings: function(e){
+    this.setState({"servings": e.target.value});
+  },
+  toggleConversion: function(){
+    this.setState({toggleConversion: !this.state.toggleConversion});
   },
   favorite: function(){
       var user = Parse.User.current();
@@ -1085,14 +1098,21 @@ var Recipe = React.createClass({displayName: "Recipe",
         });
         return memo;
       }, []);
-      ingredients = ingredients.map(function(ingredient){
-        return ( React.createElement(CardIngredient, {data: ingredient.attributes, key: ingredient.id}) );
-      });
+      console.log(this.state.servings);
+      console.log(this.state.recipeObj.get('servings'));
+      console.log( (this.state.servings / this.state.recipeObj.get("servings")) );
+      ingredients = ingredients.map(function(ingredient, index){
+        console.log(ingredient);
+        return ( React.createElement(CardIngredient, {data: ingredient.attributes, 
+          key: ingredient.id, 
+          ratio: (this.state.servings / this.state.recipeObj.get("servings"))}) );
+      }.bind(this));
 
       //build the step display items
       var steps = recipe.get("steps").map(function(step){
-        return (React.createElement(RecipeDetailStep, {data: step.attributes, key: step.id}) );
-      });
+        return (React.createElement(RecipeDetailStep, {data: step.attributes, key: step.id, 
+          ratio: (this.state.servings / this.state.recipeObj.get("servings"))}) );
+      }.bind(this));
 
       //add an edit button if the user is the owner of the recipe-title
       var edit = '';
@@ -1107,6 +1127,7 @@ var Recipe = React.createClass({displayName: "Recipe",
         fav = ( React.createElement(Button, {onClick: this.favorite}, "Add to Favorites"));
       }
       //set the display so we can return it
+      console.log(this.state);
       display = (
         React.createElement("div", null, 
           React.createElement("div", {className: "recipe-image"}, 
@@ -1132,14 +1153,17 @@ var Recipe = React.createClass({displayName: "Recipe",
               )
             )
           ), 
-
           React.createElement(Panel, {header: 
-            React.createElement("div", null, 
-              React.createElement("span", {className: "servings"}, 
-                recipe.get('servings') + " Servings"
+            React.createElement("div", {className: "row"}, 
+              React.createElement("div", {className: "col-xs-5"}, 
+                React.createElement("span", {className: "servings"}, "Adjust Value to Scale Recipe Up or Down")
               ), 
-              React.createElement(Button, {onClick: this.triggerConversion, className: "pull-right"}, 
-                React.createElement(Glyphicon, {glyph: "pencil"}), "Adjust"
+              React.createElement("div", {className: "col-xs-2"}, 
+                React.createElement(Input, {type: "number", onChange: this.handleServings, min: 1, 
+                  value: this.state.servings})
+              ), 
+              React.createElement("div", {className: "col-xs-5"}, 
+                React.createElement("span", {className: "servings"}, "Servings")
               )
             )}, 
             React.createElement(Table, {striped: true, responsive: true, hover: true}, 
@@ -1182,8 +1206,9 @@ var RecipeDetailStep = React.createClass({displayName: "RecipeDetailStep",
   render: function(){
     var step = this.props.data;
     var ingredients = step.ingredients.map(function(ingredient){
-      return ( React.createElement(CardIngredient, {data: ingredient.attributes, key: ingredient.id}) );
-    });
+      return ( React.createElement(CardIngredient, {data: ingredient.attributes, key: ingredient.id, 
+        ratio: this.props.ratio}) );
+    }.bind(this));
     return (
       React.createElement("div", {className: "row"}, 
         React.createElement("div", {className: "col-sm-12"}, 
@@ -1595,6 +1620,12 @@ ReactDOM.render(
   ),
   document.getElementById('app')
 );
+
+// TODO:
+//delete buttons are in but non functional
+//gallery pages for specific types ( aka category page template not built out )
+//need to add a bunch of recipes by different users to test with
+//rebuild routes to be inline with RESTful standard design
 
 },{"./components/interface.jsx":4,"./router":17,"backbone":36,"react":521,"react-dom":365}],17:[function(require,module,exports){
 "use strict";
