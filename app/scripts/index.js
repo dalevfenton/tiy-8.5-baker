@@ -14,3 +14,9 @@ ReactDOM.render(
   ),
   document.getElementById('app')
 );
+
+// TODO:
+//delete buttons are in but non functional
+//gallery pages for specific types ( aka category page template not built out )
+//need to add a bunch of recipes by different users to test with
+//rebuild routes to be inline with RESTful standard design

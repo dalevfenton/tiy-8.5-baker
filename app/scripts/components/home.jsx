@@ -12,6 +12,7 @@ var RecipeTypeRow = React.createClass({
     }
   },
   componentWillMount: function(){
+    this.setState({"recipes": null});
     var Recipe = Parse.Object.extend("Recipe");
     var query = new Parse.Query(Recipe)
     query.limit(5);
