@@ -46,10 +46,10 @@ var UserRecipes = React.createClass({
               <span>{recipe.get('recipeType')}</span>
             </div>
             <div className="col-sm-2">
-              <span><a href={"#recipe-edit/" + recipe.id } className="btn btn-primary">Edit</a></span>
+              <span><a href={"#recipe/" + recipe.id + "/edit"} className="btn btn-primary">Edit</a></span>
             </div>
             <div className="col-sm-2">
-              <span><a href={"#recipe-delete/" + recipe.id } className="btn btn-error">Delete</a></span>
+              <span><a href={"#recipe/" + recipe.id + "/delete"} className="btn btn-danger">Delete</a></span>
             </div>
           </li>
         );

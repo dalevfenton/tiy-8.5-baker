@@ -13,6 +13,7 @@ var Header = require('./header.jsx');
 var Sidebar = require('./sidebar.jsx');
 var NewRecipe = require('./newrecipe.jsx');
 var Recipe = require('./recipe.jsx');
+var RecipeDelete = require('./recipedelete.jsx');
 var Home = require('./home.jsx');
 var Profile = require('./profile.jsx');
 

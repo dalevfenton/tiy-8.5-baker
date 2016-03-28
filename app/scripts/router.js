@@ -6,8 +6,9 @@ var Router = Backbone.Router.extend({
       'login': 'login',
       'new-recipe': 'newRecipe',
       'recipe/:id': 'recipe',
+      'recipe/:id/edit': 'recipeEdit',
       'recipe-edit/:id': 'recipeEdit',
-      'recipe-delete/:id': 'recipeDelete',
+      'recipe/:id/delete': 'recipeDelete',
       'type/:type': 'type',
       'profile': 'profile',
       '*notFound': 'catch'

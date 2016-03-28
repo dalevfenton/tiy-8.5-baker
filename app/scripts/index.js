@@ -16,6 +16,7 @@ ReactDOM.render(
 );
 
 // TODO:
+//updating doesn't work when you need to add a step or ingredient to a post
 //delete buttons are in but non functional
 //gallery pages for specific types ( aka category page template not built out )
 //need to add a bunch of recipes by different users to test with

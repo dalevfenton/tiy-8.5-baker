@@ -5,6 +5,7 @@ var _ = require('underscore');
 var CardIngredient = require('./cardingredient.jsx');
 var RecipeDetailStep = require('./recipedetailstep.jsx');
 var TitleChiron = require('./titlechiron.jsx');
+var Loading = require('./loading.jsx');
 
 var Panel = require('react-bootstrap').Panel;
 var Table = require('react-bootstrap').Table;
@@ -94,10 +95,7 @@ var Recipe = React.createClass({
   },
   render: function(){
     var display = (
-      <div className="loading">
-        <h3>Loading...</h3>
-        <Glyphicon className="icon-refresh-animate" glyph="refresh" />
-      </div>
+      <Loading />
     );
 
     if(this.state.recipeObj){
