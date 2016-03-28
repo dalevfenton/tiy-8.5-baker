@@ -56,14 +56,20 @@ var Recipe = React.createClass({
       // console.log(recipe);
       // console.log(recipe.attributes);
       //set the recipe to state and update our view
-      this.setState({'recipeObj': recipe});
+
+      setTimeout(this.setState({'recipeObj': recipe}), 2000);
     }.bind(this),function(error){
       console.log('error happened', error);
     });
 
   },
   render: function(){
-    var display = ( <div>Show Loading Graphic</div>);
+    var display = (
+      <div className="loading">
+        <h3>Loading...</h3>
+        <Glyphicon className="icon-refresh-animate" glyph="refresh" />
+      </div>
+    );
 
     if(this.state.recipeObj){
       //only render the detail view if we have our recipe retrieved from the server
@@ -97,28 +103,41 @@ var Recipe = React.createClass({
       //add an edit button if the user is the owner of the recipe-title
       var edit = '';
       if(this.props.user && this.props.user.id === recipe.get('authorId')){
-        edit = (<a href={"#recipe-edit/" + recipe.id} className="btn btn-primary">Edit This Recipe</a>)
+        edit = (<a href={"#recipe-edit/" + recipe.id} className="btn btn-primary pull-right">Edit This Recipe</a>)
       }
       //set the display so we can return it
       display = (
         <div>
-          <h1 className="recipe-title">{recipe.get('title')}</h1>
-          <h3 className="recipe-author">by {recipe.get('authorName')}</h3>
-          <div>
+          <div className="recipe-image">
             <img src={recipe.get('picture').url()} />
+            <h1 className="recipe-title">{recipe.get('title')}</h1>
+            <h3 className="recipe-author">by {recipe.get('authorName')}</h3>
+            <ul className="recipe-details">
+              <li>
+                <div className="recipe-label">Recipe Type: </div>
+                <div className="recipe-info">{recipe.get('recipeType')}</div>
+              </li>
+              <li>
+                <div className="recipe-label">Prep Time: </div>
+                <div className="recipe-info">{recipe.get('prepTime')} minutes</div>
+              </li>
+              <li>
+                <div className="recipe-label">Cook Time: </div>
+                <div className="recipe-info">{recipe.get('cookTime')} minutes</div>
+              </li>
+              <li>
+                <div className="recipe-label">Cook Temp: </div>
+                <div className="recipe-info">{recipe.get('temp')} &deg;{tempScale}</div>
+              </li>
+            </ul>
           </div>
-          <ul>
-            <li>Recipe Type: {recipe.get('recipeType')}</li>
-            <li>Prep Time: {recipe.get('prepTime')} minutes</li>
-            <li>Cook Time: {recipe.get('cookTime')} minutes</li>
-            <li>Cook Temp: {recipe.get('temp')} &deg;{tempScale}</li>
-          </ul>
+
           <Panel header={
             <div>
               <span className="servings">
-                {recipe.get('servings')} Servings
+                {recipe.get('servings') + " Servings"}
               </span>
-              <Button onClick={this.triggerConversion} pullRight>
+              <Button onClick={this.triggerConversion} className="pull-right">
                 <Glyphicon glyph="pencil" />Adjust
               </Button>
             </div> } >
@@ -133,7 +152,9 @@ var Recipe = React.createClass({
           <div>
             {recipe.get("notes")}
           </div>
-          {edit}
+          <div className="bottom-button">
+            {edit}
+          </div>
         </div>
       );
     }

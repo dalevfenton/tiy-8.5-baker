@@ -270,6 +270,14 @@ var Interface = React.createClass({
             <div className="col-sm-10">
               {body}
             </div>
+
+          </div>
+        </div>
+        <div className="container-fluid">
+          <div className="row">
+            <div id="footer" >
+              
+            </div>
           </div>
         </div>
       </div>
