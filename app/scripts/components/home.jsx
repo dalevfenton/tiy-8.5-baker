@@ -63,7 +63,15 @@ var RecipeTypeRow = React.createClass({
     }
     if(this.state.recipes){
       recipes = this.state.recipes.map(function(recipe){
-        return ( <div key={recipe.id}><h6>{recipe.get('title')}</h6></div> );
+        return (
+          <div className="thumb-outer col-sm-3" key={recipe.id}>
+            <div className="thumb-inner">
+              <a href={"#recipe/" + recipe.id}>
+                <img className="thumb-image" src={recipe.get('picture').url()} />
+                <h6 className="thumb-title">{recipe.get('title')}</h6>
+              </a>
+            </div>
+          </div> );
       });
     }
     var title = ( <span>View All <Glyphicon glyph="chevron-right" /></span> );
@@ -72,7 +80,9 @@ var RecipeTypeRow = React.createClass({
         <div className="col-sm-12">
           <TitleChiron title={labels[this.props.type]} link={ "type/" + this.props.type }
             linkTitle={title} />
-          {recipes}
+          <div className="row">
+            {recipes}
+          </div>
         </div>
       </div>
     );

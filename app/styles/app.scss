@@ -72,3 +72,41 @@ img {
 
   }
 }
+
+.thumb-outer{
+  position: relative;
+  height: 150px;
+}
+.thumb-inner{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+
+  a {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: auto;
+      height: auto;
+      max-height: none;
+      max-width: none;
+      min-height: 100%;
+      min-width: 100%;
+      transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -webkit-transform: translate(-50%, -50%);
+  }
+}
+.thumb-title{
+  position: absolute;
+  color: black;
+  text-align: center;
+  margin: 0;
+  padding: 10px;
+  background: rgba(255,255,255, .75);
+  top: 0;
+  right: 0;
+}

@@ -104,6 +104,9 @@ var Recipe = React.createClass({
         <div>
           <h1 className="recipe-title">{recipe.get('title')}</h1>
           <h3 className="recipe-author">by {recipe.get('authorName')}</h3>
+          <div>
+            <img src={recipe.get('picture').url()} />
+          </div>
           <ul>
             <li>Recipe Type: {recipe.get('recipeType')}</li>
             <li>Prep Time: {recipe.get('prepTime')} minutes</li>

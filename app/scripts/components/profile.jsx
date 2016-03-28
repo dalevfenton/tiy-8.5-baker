@@ -40,7 +40,7 @@ var UserRecipes = React.createClass({
         return (
           <li key={recipe.id} className="row">
             <div className="col-sm-6">
-              <span>{recipe.get('title')}</span>
+              <span><a href={"#recipe/" + recipe.id}>{recipe.get('title')}</a></span>
             </div>
             <div className="col-sm-2">
               <span>{recipe.get('recipeType')}</span>

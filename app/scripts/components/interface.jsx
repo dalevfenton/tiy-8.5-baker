@@ -31,6 +31,9 @@ var Interface = React.createClass({
     }
   },
   recipeSubmit: function( recipeObj, actionType, recipeRef ){
+    console.log(recipeObj);
+    console.log(actionType);
+    console.log(recipeRef);
     //make sure we have a user to set on the object
     if(Parse.User.current()){
       //set the author's id to the recipeObj since it was not held by the form
@@ -55,13 +58,13 @@ var Interface = React.createClass({
         acl.setWriteAccess(Parse.User.current().id, true);
       }
 
-      
+
 
       console.log(name);
       //exclude the steps, picture and pubpriv from the recipe
       //item since they are included as relational data, a File object
       //and the ACL respectively
-      var recipeVals = _.omit(recipeObj, ['steps', 'pubpriv', 'picture']);
+      var recipeVals = _.omit(recipeObj, ['steps', 'pubpriv']);
       var newRecipe;
 
       if(recipeRef !== undefined){
@@ -69,14 +72,17 @@ var Interface = React.createClass({
         newRecipe = recipeRef;
         newRecipe.set(recipeVals);
       }else{
+        console.log('recipe not defined, creating a new one');
         newRecipe = new Recipe(recipeVals);
       }
       newRecipe.setACL(acl);
-
+      console.log('recipe before save');
+      console.log(newRecipe);
       var recipeId;
       newRecipe.save(null).then(function(recipe) {
         // the recipe listing was saved.
         console.log('recipe top level object was saved', recipe);
+        console.log(recipe.attributes);
         // save recipeId into outer scope so we can reference it again
         // when saving child and granchild elements
         recipeId = recipe.id;

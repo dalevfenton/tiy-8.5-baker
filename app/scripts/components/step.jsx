@@ -14,15 +14,19 @@ var Step = React.createClass({
   edit: function(){
     this.setState({toggleEdit: !this.state.toggleEdit});
   },
+  deleteIngredient: function(ingredientObj, index){
+    console.log('do the delete');
+  },
   render: function(){
     var ingredients = this.props.step.ingredients.map(function(ingredient, index){
-      return <Ingredient ingredient={ingredient} key={index} />;
-    });
+      return <Ingredient ingredient={ingredient} key={index} delete={this.props.deleteIngredient} />;
+    }.bind(this));
     if(this.state.toggleEdit){
       return (
         <RecipeStep index={this.props.index}
           editStep={this.props.editStep}
-          step={this.props.step} resetEdit={this.edit} />
+          step={this.props.step} resetEdit={this.edit}
+          delete={this.props.deleteIngredient} />
       );
     }else{
       return (

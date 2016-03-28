@@ -118,22 +118,27 @@ var NewRecipe = React.createClass({
     this.setState({'steps': steps});
   },
   editStep: function(stepObj, index){
-    console.log('edit step called');
     var curSteps = this.state.steps;
     curSteps[index] = stepObj;
     this.setState({'steps': curSteps });
+  },
+  editIngredient: function(ingredientObj, index){
+    console.log('edit ingredient', ingredientObj);
+  },
+  deleteIngredient: function(ingredientObj, index){
+    console.log('delete ingredient', ingredientObj);
   },
   handlePicture: function(e){
     e.preventDefault();
     //this works too but it very ugly
     // console.log(this.refs.fileInput.getInputDOMNode().files);
-    // console.log(e.target.files[0]);
     var name = this.props.user.id + Date.now() + ".jpg";
     var file = new Parse.File(name, e.target.files[0] );
     file.save().then(function(file){
       console.log(file);
       this.setState({picture: file});
-    }.bind(this), function(error){
+    }.bind(this)
+    , function(error){
       console.log('error saving file', error);
     });
   },

@@ -56,7 +56,8 @@ var RecipeStep = React.createClass({
     console.log('render called');
     var ingredients = this.state.ingredients.map(function(ingredient, index){
       return <Ingredient ingredient={ingredient} key={index}
-        index={index} editIngredient={this.editIngredient} />;
+        index={index} editIngredient={this.editIngredient}
+        delete={this.props.delete} />;
     }.bind(this));
     var indexDisp;
     if(this.props.step){
