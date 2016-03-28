@@ -67,7 +67,7 @@ var Profile = React.createClass({
   render: function(){
     if(this.props.user){
       var user = this.props.user.attributes;
-      console.log(user);
+      // console.log(user);
       return (
         <div>
           <TitleChiron title="Your Information" />

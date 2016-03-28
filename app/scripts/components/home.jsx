@@ -77,7 +77,7 @@ var RecipeTypeRow = React.createClass({
     return (
       <div className="row">
         <div className="col-sm-12">
-          <TitleChiron title={labels[this.props.type]} link={ "type/" + this.props.type }
+          <TitleChiron title={labels[this.props.type]} link={ "#type/" + this.props.type }
             linkTitle={title} />
           <div className="row">
             {recipes}
@@ -90,11 +90,9 @@ var RecipeTypeRow = React.createClass({
 
 var Home = React.createClass({
   render: function(){
-    console.log(this.props.types);
     var recipeTypes = this.props.types.map(function(type){
       return <RecipeTypeRow type={type} key={type} user={this.props.user}/>
     }.bind(this));
-    console.log(recipeTypes);
     return (
       <div>
         <h1>Home Page</h1>

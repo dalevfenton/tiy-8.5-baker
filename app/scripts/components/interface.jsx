@@ -31,9 +31,6 @@ var Interface = React.createClass({
     }
   },
   recipeSubmit: function( recipeObj, actionType, recipeRef ){
-    console.log(recipeObj);
-    console.log(actionType);
-    console.log(recipeRef);
     //make sure we have a user to set on the object
     if(Parse.User.current()){
       //set the author's id to the recipeObj since it was not held by the form
@@ -57,7 +54,6 @@ var Interface = React.createClass({
         acl.setReadAccess(Parse.User.current().id, true);
         acl.setWriteAccess(Parse.User.current().id, true);
       }
-      console.log(name);
       //exclude the steps, picture and pubpriv from the recipe
       //item since they are included as relational data, a File object
       //and the ACL respectively
@@ -65,19 +61,15 @@ var Interface = React.createClass({
       var newRecipe;
 
       if(recipeRef !== undefined){
-        console.log('recipeRef is defined, do an update');
         newRecipe = recipeRef;
         newRecipe.set(recipeVals);
       }else{
-        console.log('recipe not defined, creating a new one');
         newRecipe = new Recipe(recipeVals);
       }
       newRecipe.setACL(acl);
       var recipeId;
       newRecipe.save(null).then(function(recipe) {
         // the recipe listing was saved.
-        // console.log('recipe top level object was saved', recipe);
-        // console.log(recipe.attributes);
         // save recipeId into outer scope so we can reference it again
         // when saving child and granchild elements
         recipeId = recipe.id;
@@ -104,9 +96,8 @@ var Interface = React.createClass({
         _.each(recipeObj.steps, function(stepData, stepIndex){
           _.each(stepData.ingredients, function(ingredient, ingIndex){
             var ingredient;
-            // console.log(ingredient);
             if(recipeRef !== undefined){
-              ingredient = recipeRef.get('steps')[stepIndex][ingIndex];
+              ingredient = recipeRef.get('steps')[stepIndex].get('ingredients')[ingIndex];
             }else{
               ingredient = new Ingredient(ingredient);
             }

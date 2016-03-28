@@ -25,7 +25,6 @@ var Recipe = React.createClass({
     var Ingredient = Parse.Object.extend("Ingredient");
 
     var recipe, steps;
-    console.log(this.props.user);
     var query = new Parse.Query(Recipe);
     query.get(this.props.id).then(function(recipeObj) {
       // the recipe listing was retrieved
@@ -90,8 +89,8 @@ var Recipe = React.createClass({
 
     if(this.state.recipeObj){
       //only render the detail view if we have our recipe retrieved from the server
-      console.log('recipeObj is defined!');
-      console.log(this.state.recipeObj.attributes);
+      // console.log('recipeObj is defined!');
+      // console.log(this.state.recipeObj.attributes);
 
       var recipe = this.state.recipeObj;
       //convert tempScale index value to string for display
