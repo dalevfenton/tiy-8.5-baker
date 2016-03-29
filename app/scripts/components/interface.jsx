@@ -199,6 +199,8 @@ var Interface = React.createClass({
     }else{
       types = anonList;
     }
+    console.log(this.state);
+    console.log(types);
     if(this.state.router.current == 'home'){
       //home screen
       body = (

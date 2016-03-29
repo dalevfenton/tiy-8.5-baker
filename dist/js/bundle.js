@@ -329,6 +329,8 @@ var Interface = React.createClass({displayName: "Interface",
     }else{
       types = anonList;
     }
+    console.log(this.state);
+    console.log(types);
     if(this.state.router.current == 'home'){
       //home screen
       body = (
@@ -1537,8 +1539,9 @@ module.exports = RecipeType;
 
 },{"./recipetyperow.jsx":16,"react":525}],16:[function(require,module,exports){
 "use strict";
-var React = require('react');
+var Backbone = require('backbone');
 var Parse = require('parse');
+var React = require('react');
 
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
@@ -1559,8 +1562,12 @@ var RecipeTypeRow = React.createClass({displayName: "RecipeTypeRow",
 
     switch (this.props.type) {
       case 'user':
-        //set user query
-        query.equalTo( "authorId", this.props.user.id );
+        if(this.props.user){
+          //set user query
+          query.equalTo( "authorId", this.props.user.id );
+        }else{
+          Backbone.history.navigate('', {trigger: true});
+        }
         break;
       case 'public':
         //set user query
@@ -1569,11 +1576,12 @@ var RecipeTypeRow = React.createClass({displayName: "RecipeTypeRow",
         //need to keep track of views on objects or something
         break;
       case 'favorite':
-        var relation = Parse.User.current().relation("favorites");
-        query = relation.query();
-        // var testFavs = ['uGJRx36SoO'];
-        // query.containedIn( "objectId", this.props.user.favorites );
-        // query.containedIn( "objectId", testFavs );
+        if(this.props.user){
+          var relation = Parse.User.current().relation("favorites");
+          query = relation.query();
+        }else{
+          Backbone.history.navigate('', {trigger: true});
+        }
         break;
       default:
         query.equalTo("recipeType", this.props.type.toUpperCase() );
@@ -1633,7 +1641,7 @@ var RecipeTypeRow = React.createClass({displayName: "RecipeTypeRow",
 
 module.exports = RecipeTypeRow;
 
-},{"./loading.jsx":5,"./titlechiron.jsx":19,"parse":244,"react":525,"react-bootstrap":358}],17:[function(require,module,exports){
+},{"./loading.jsx":5,"./titlechiron.jsx":19,"backbone":40,"parse":244,"react":525,"react-bootstrap":358}],17:[function(require,module,exports){
 "use strict";
 var React = require('react');
 var Nav = require('react-bootstrap').Nav;
@@ -1641,18 +1649,26 @@ var NavItem = require('react-bootstrap').NavItem;
 
 var Sidebar = React.createClass({displayName: "Sidebar",
   render: function(){
-    if(this.props.user){
-
-    }else{
-
-    }
+    var labels = {
+      'user': 'My Recipes',
+      'public': 'Browse All Recipes',
+      'popular': 'Browse Popular Recipes',
+      'favorite': 'Your Favorite Recipes',
+      'breakfast': 'Breakfast Recipes',
+      'lunch': 'Lunch Recipes',
+      'dinner': 'Dinner Recipes',
+      'dessert': 'Dessert Recipes',
+      'appetizer': 'Appetizer Recipes',
+    };
+    var navItems = this.props.types.map(function(type, index){
+      return (
+        React.createElement(NavItem, {eventKey: index, key: index, href: "#type/" + type}, labels[type])
+      );
+    });
     return (
       React.createElement("div", {className: "col-sm-2"}, 
         React.createElement(Nav, {stacked: true, bsStyle: "tabs", className: "recipes-sidebar"}, 
-          React.createElement(NavItem, {eventKey: 1, href: "#type/user"}, "My Recipes"), 
-          React.createElement(NavItem, {eventKey: 2, href: "#type/public"}, "Public Recipes"), 
-          React.createElement(NavItem, {eventKey: 3, href: "#type/popular"}, "Popular Recipes"), 
-          React.createElement(NavItem, {eventKey: 4, href: "#type/favorites"}, "My Favorite Recipes")
+          navItems
         )
       )
     );
@@ -1772,8 +1788,7 @@ ReactDOM.render(
 
 // TODO:
 //updating doesn't work when you need to add a step or ingredient to a post
-//delete buttons are in but non functional
-//gallery pages for specific types ( aka category page template not built out )
+//need to figure out how to unmount compnents on link clicks so they reset
 //need to add a bunch of recipes by different users to test with
 //rebuild routes to be inline with RESTful standard design
 

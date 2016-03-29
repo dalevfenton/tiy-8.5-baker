@@ -17,7 +17,6 @@ ReactDOM.render(
 
 // TODO:
 //updating doesn't work when you need to add a step or ingredient to a post
-//delete buttons are in but non functional
-//gallery pages for specific types ( aka category page template not built out )
+//need to figure out how to unmount compnents on link clicks so they reset
 //need to add a bunch of recipes by different users to test with
 //rebuild routes to be inline with RESTful standard design

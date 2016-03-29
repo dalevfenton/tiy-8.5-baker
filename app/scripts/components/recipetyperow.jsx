@@ -1,5 +1,6 @@
-var React = require('react');
+var Backbone = require('backbone');
 var Parse = require('parse');
+var React = require('react');
 
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
@@ -20,8 +21,12 @@ var RecipeTypeRow = React.createClass({
 
     switch (this.props.type) {
       case 'user':
-        //set user query
-        query.equalTo( "authorId", this.props.user.id );
+        if(this.props.user){
+          //set user query
+          query.equalTo( "authorId", this.props.user.id );
+        }else{
+          Backbone.history.navigate('', {trigger: true});
+        }
         break;
       case 'public':
         //set user query
@@ -30,11 +35,12 @@ var RecipeTypeRow = React.createClass({
         //need to keep track of views on objects or something
         break;
       case 'favorite':
-        var relation = Parse.User.current().relation("favorites");
-        query = relation.query();
-        // var testFavs = ['uGJRx36SoO'];
-        // query.containedIn( "objectId", this.props.user.favorites );
-        // query.containedIn( "objectId", testFavs );
+        if(this.props.user){
+          var relation = Parse.User.current().relation("favorites");
+          query = relation.query();
+        }else{
+          Backbone.history.navigate('', {trigger: true});
+        }
         break;
       default:
         query.equalTo("recipeType", this.props.type.toUpperCase() );
