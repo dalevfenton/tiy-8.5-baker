@@ -8,12 +8,6 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 
 var TitleChiron = require('./titlechiron.jsx');
 
-var UserRecipe = React.createClass({
-  render: function(){
-
-  }
-});
-
 var UserRecipes = React.createClass({
   getInitialState: function(){
     return {
@@ -64,6 +58,11 @@ var UserRecipes = React.createClass({
 });
 
 var Profile = React.createClass({
+  componentWillMount: function(){
+    if(!this.props.user){
+      Backbone.history.navigate('', {trigger: true});
+    }
+  },
   render: function(){
     if(this.props.user){
       var user = this.props.user.attributes;
@@ -102,7 +101,7 @@ var Profile = React.createClass({
         </div>
       );
     }else{
-      Backbone.history.navigate("", {trigger:true});
+      return ( <div></div> );
     }
   }
 });

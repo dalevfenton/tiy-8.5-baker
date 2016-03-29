@@ -21,14 +21,13 @@ var RecipeDelete = React.createClass({
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //HOW TO INCLUDE POINTER FIELDS BACK INTO PARENT OBJ
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // query.include('steps');
-    // query.include('steps.ingredients');
+    query.include('steps');
+    query.include('steps.ingredients');
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     query.get(this.props.id).then(function(recipeObj) {
       // the recipe listing was retrieved
       if(recipeObj.get('authorId') == Parse.User.current().id ){
-        console.log('author owns this post');
         this.setState({'recipe': recipeObj});
       }else{
         //user not the post owner, redirect to home
@@ -42,7 +41,20 @@ var RecipeDelete = React.createClass({
   },
   doDelete: function(e){
     e.preventDefault();
-    console.log('do the delete now');
+    var promises = [];
+    this.state.recipe.get('steps').map(function(step){
+      step.get('ingredients').map(function(ingredient){
+        promises.push(ingredient.destroy());
+      });
+      promises.push(step.destroy());
+    });
+    promises.push(this.state.recipe.destroy());
+    console.log(promises);
+    Parse.Promise.when(promises).then(function(deletes){
+      Backbone.history.navigate('profile', {trigger: true});
+    },function(error){
+      console.log('error deleting recipe: ', error);
+    });
   },
   render: function(){
     console.log(this.state);

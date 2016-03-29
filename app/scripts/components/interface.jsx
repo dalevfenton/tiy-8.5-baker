@@ -167,6 +167,7 @@ var Interface = React.createClass({
     Parse.User.logOut().then(function(data, code, xhr){
       this.setState({'user': null});
     }.bind(this));
+    Backbone.history.navigate('', {trigger: true});
   },
   componentWillMount: function(){
     this.callback = (function(){

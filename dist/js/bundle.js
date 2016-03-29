@@ -378,6 +378,7 @@ var Interface = React.createClass({displayName: "Interface",
     Parse.User.logOut().then(function(data, code, xhr){
       this.setState({'user': null});
     }.bind(this));
+    Backbone.history.navigate('', {trigger: true});
   },
   componentWillMount: function(){
     this.callback = (function(){
@@ -893,12 +894,6 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 
 var TitleChiron = require('./titlechiron.jsx');
 
-var UserRecipe = React.createClass({displayName: "UserRecipe",
-  render: function(){
-
-  }
-});
-
 var UserRecipes = React.createClass({displayName: "UserRecipes",
   getInitialState: function(){
     return {
@@ -949,6 +944,11 @@ var UserRecipes = React.createClass({displayName: "UserRecipes",
 });
 
 var Profile = React.createClass({displayName: "Profile",
+  componentWillMount: function(){
+    if(!this.props.user){
+      Backbone.history.navigate('', {trigger: true});
+    }
+  },
   render: function(){
     if(this.props.user){
       var user = this.props.user.attributes;
@@ -987,7 +987,7 @@ var Profile = React.createClass({displayName: "Profile",
         )
       );
     }else{
-      Backbone.history.navigate("", {trigger:true});
+      return ( React.createElement("div", null) );
     }
   }
 });
@@ -1236,14 +1236,13 @@ var RecipeDelete = React.createClass({displayName: "RecipeDelete",
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //HOW TO INCLUDE POINTER FIELDS BACK INTO PARENT OBJ
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // query.include('steps');
-    // query.include('steps.ingredients');
+    query.include('steps');
+    query.include('steps.ingredients');
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     query.get(this.props.id).then(function(recipeObj) {
       // the recipe listing was retrieved
       if(recipeObj.get('authorId') == Parse.User.current().id ){
-        console.log('author owns this post');
         this.setState({'recipe': recipeObj});
       }else{
         //user not the post owner, redirect to home
@@ -1257,7 +1256,20 @@ var RecipeDelete = React.createClass({displayName: "RecipeDelete",
   },
   doDelete: function(e){
     e.preventDefault();
-    console.log('do the delete now');
+    var promises = [];
+    this.state.recipe.get('steps').map(function(step){
+      step.get('ingredients').map(function(ingredient){
+        promises.push(ingredient.destroy());
+      });
+      promises.push(step.destroy());
+    });
+    promises.push(this.state.recipe.destroy());
+    console.log(promises);
+    Parse.Promise.when(promises).then(function(deletes){
+      Backbone.history.navigate('profile', {trigger: true});
+    },function(error){
+      console.log('error deleting recipe: ', error);
+    });
   },
   render: function(){
     console.log(this.state);
