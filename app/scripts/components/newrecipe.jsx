@@ -15,6 +15,7 @@ var Glyphicon = require('react-bootstrap').Glyphicon;
 var TitleChiron = require('./titlechiron.jsx');
 var RecipeStep = require('./recipestep.jsx');
 var Step = require('./step.jsx');
+var Loading = require('./loading.jsx');
 
 var LinkedStateMixin = require('react/lib/LinkedStateMixin');
 
@@ -149,133 +150,137 @@ var NewRecipe = React.createClass({
     this.props.recipeSubmit(this.state, this.props.type, this.recipe);
   },
   render: function(){
-    var tempSc = ['F', 'C'][this.state.tempScale];
-    var innerDropdown = (
-      <DropdownButton
-        title={ tempSc }
-        id="input-dropdown-addon"
-        onSelect={ this.getTempScale }
-        key={ this.state.tempScale } >
-        <MenuItem eventKey="0" key="0">&deg;F</MenuItem>
-        <MenuItem eventKey="1" key="1">&deg;C</MenuItem>
-      </DropdownButton>
-    );
-    var steps = this.state.steps.map(function(step, index){
-      return <Step step={step} index={index} key={index} editStep={this.editStep} />
-    }.bind(this));
-    var button;
-    if(this.props.user){
-      button = (
-        <ButtonInput type="submit" block value="Save This Recipe!"
-          bsStyle="success" />
+    if((this.props.type == "edit" && this.recipe) || this.props.type == "new" ){
+      var tempSc = ['F', 'C'][this.state.tempScale];
+      var innerDropdown = (
+        <DropdownButton
+          title={ tempSc }
+          id="input-dropdown-addon"
+          onSelect={ this.getTempScale }
+          key={ this.state.tempScale } >
+          <MenuItem eventKey="0" key="0">&deg;F</MenuItem>
+          <MenuItem eventKey="1" key="1">&deg;C</MenuItem>
+        </DropdownButton>
       );
-    }else{
-      button = (
-        <ButtonInput type="button" block value="Login To Save Your Recipe"
-          bsStyle="success" onClick={this.props.modalOpen} />
+      var steps = this.state.steps.map(function(step, index){
+        return <Step step={step} index={index} key={index} editStep={this.editStep} />
+      }.bind(this));
+      var button;
+      if(this.props.user){
+        button = (
+          <ButtonInput type="submit" block value="Save This Recipe!"
+            bsStyle="success" />
+        );
+      }else{
+        button = (
+          <ButtonInput type="button" block value="Login To Save Your Recipe"
+            bsStyle="success" onClick={this.props.modalOpen} />
+        );
+      }
+      var fileLabel = (
+        <div className="file-label">
+          <div><Glyphicon glyph="plus" /></div>
+          <div>Add Photo</div>
+        </div>
       );
-    }
-    var fileLabel = (
-      <div className="file-label">
-        <div><Glyphicon glyph="plus" /></div>
-        <div>Add Photo</div>
-      </div>
-    );
-    var fileDisplay;
-    if(this.state.picture){
-      fileDisplay = (
-          <img src={this.state.picture.url()} />
-      );
-    }else{
-      fileDisplay = (<Input id="fileInput" type="file" ref="fileInput"
-        onChange={this.handlePicture}
-        label={fileLabel} bsSize="small" />);
-    }
-    return (
-      <div>
-        <Panel header="Add A New Recipe">
-          <form onSubmit={this.handleSubmit}>
-            <div className="row">
-              <div className="col-sm-12">
-                <TitleChiron title="Basic Info" />
-              </div>
-              <div className="col-sm-3">
-                <div className="fileblock">
-                  {fileDisplay}
+      var fileDisplay;
+      if(this.state.picture){
+        fileDisplay = (
+            <img src={this.state.picture.url()} />
+        );
+      }else{
+        fileDisplay = (<Input id="fileInput" type="file" ref="fileInput"
+          onChange={this.handlePicture}
+          label={fileLabel} bsSize="small" />);
+      }
+      return (
+        <div>
+          <Panel header="Add A New Recipe">
+            <form onSubmit={this.handleSubmit}>
+              <div className="row">
+                <div className="col-sm-12">
+                  <TitleChiron title="Basic Info" />
                 </div>
-              </div>
-              <div className="col-sm-9">
-                <div className="row">
-                  <div className="col-sm-12">
-                    <Input type="text" placeholder="Recipe Name"
-                      valueLink={this.linkState('title')} />
-                  </div>
-                  <div className="col-sm-6">
-                    <Input type="number" placeholder="Prep Time" addonAfter="mins"
-                      valueLink={this.linkState('prepTime')} />
-                  </div>
-                  <div className="col-sm-6">
-                    <Input type="number" placeholder="Cook Time" addonAfter="mins"
-                      valueLink={this.linkState('cookTime')} />
-                  </div>
-                  <div className="col-sm-6">
-                    <Input type="select" placeholder="Recipe Type"
-                      valueLink={this.linkState('recipeType')}
-                      >
-                      <option value="Recipe Type">Recipe Type</option>
-                      <option value="Breakfast">Breakfast</option>
-                      <option value="Lunch">Lunch</option>
-                      <option value="Dinner">Dinner</option>
-                      <option value="Dessert">Dessert</option>
-                      <option value="Appetizer">Appetizer</option>
-                    </Input>
-                  </div>
-                  <div className="col-sm-6">
-                    <Input type="number" placeholder="Cooking Temp"
-                      buttonAfter={innerDropdown}
-                      getScale={this.getCookingTemp}
-                      valueLink={this.linkState('temp')} />
-                  </div>
-                  <div className="col-sm-3">
-                    <Input type="radio" name="pubpriv"
-                      value="public" label="Public"
-                      checked={this.state.pubpriv == 'public'}
-                      onChange={this.setVisiblity} />
-                  </div>
-                  <div className="col-sm-3">
-                    <Input type="radio" name="pubpriv"
-                      value="private" label="Private"
-                      checked={this.state.pubpriv == 'private'}
-                      onChange={this.setVisiblity} />
+                <div className="col-sm-3">
+                  <div className="fileblock">
+                    {fileDisplay}
                   </div>
                 </div>
+                <div className="col-sm-9">
+                  <div className="row">
+                    <div className="col-sm-12">
+                      <Input type="text" placeholder="Recipe Name"
+                        valueLink={this.linkState('title')} />
+                    </div>
+                    <div className="col-sm-6">
+                      <Input type="number" placeholder="Prep Time" addonAfter="mins"
+                        valueLink={this.linkState('prepTime')} />
+                    </div>
+                    <div className="col-sm-6">
+                      <Input type="number" placeholder="Cook Time" addonAfter="mins"
+                        valueLink={this.linkState('cookTime')} />
+                    </div>
+                    <div className="col-sm-6">
+                      <Input type="select" placeholder="Recipe Type"
+                        valueLink={this.linkState('recipeType')}
+                        >
+                        <option value="Recipe Type">Recipe Type</option>
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="Dessert">Dessert</option>
+                        <option value="Appetizer">Appetizer</option>
+                      </Input>
+                    </div>
+                    <div className="col-sm-6">
+                      <Input type="number" placeholder="Cooking Temp"
+                        buttonAfter={innerDropdown}
+                        getScale={this.getCookingTemp}
+                        valueLink={this.linkState('temp')} />
+                    </div>
+                    <div className="col-sm-3">
+                      <Input type="radio" name="pubpriv"
+                        value="public" label="Public"
+                        checked={this.state.pubpriv == 'public'}
+                        onChange={this.setVisiblity} />
+                    </div>
+                    <div className="col-sm-3">
+                      <Input type="radio" name="pubpriv"
+                        value="private" label="Private"
+                        checked={this.state.pubpriv == 'private'}
+                        onChange={this.setVisiblity} />
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="row">
-              <div className="col-sm-12">
-                <Input type="number" addonBefore="This Recipe Will Make"
-                  addonAfter="Servings" valueLink={this.linkState('servings')} />
+              <div className="row">
+                <div className="col-sm-12">
+                  <Input type="number" addonBefore="This Recipe Will Make"
+                    addonAfter="Servings" valueLink={this.linkState('servings')} />
+                </div>
               </div>
-            </div>
-            <div className="row">
-              {steps}
-            </div>
-            <div className="row">
-              <RecipeStep index={this.state.steps.length + 1} addStep={this.addStep}/>
-            </div>
-            <div className="row">
-              <div className="col-sm-12">
-                <TitleChiron title="Personal Notes" />
-                <Input type="textarea" placeholder="Add Your Notes Here"
-                  valueLink={this.linkState('notes')} />
+              <div className="row">
+                {steps}
               </div>
-            </div>
-            {button}
+              <div className="row">
+                <RecipeStep index={this.state.steps.length + 1} addStep={this.addStep}/>
+              </div>
+              <div className="row">
+                <div className="col-sm-12">
+                  <TitleChiron title="Personal Notes" />
+                  <Input type="textarea" placeholder="Add Your Notes Here"
+                    valueLink={this.linkState('notes')} />
+                </div>
+              </div>
+              {button}
 
-          </form>
-        </Panel>
-      </div>
-    );
+            </form>
+          </Panel>
+        </div>
+      );
+    }else{
+      return ( <Loading />);
+    }
   }
 });
 

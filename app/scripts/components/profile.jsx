@@ -64,45 +64,44 @@ var Profile = React.createClass({
     }
   },
   render: function(){
-    if(this.props.user){
-      var user = this.props.user.attributes;
-      // console.log(user);
-      return (
-        <div>
-          <TitleChiron title="Your Information" />
-          <div className="row">
-            <div className="col-sm-6">
-              <div className="user-info user-label">First Name:</div>
-              <div className="user-info">{user.firstname}</div>
-            </div>
-            <div className="col-sm-6">
-              <div className="user-info user-label">Last Name:</div>
-              <div className="user-info">{user.lastname}</div>
-            </div>
-            <div className="col-sm-6">
-              <div className="user-info user-label">Username:</div>
-              <div className="user-info">{user.username}</div>
-            </div>
-            <div className="col-sm-6">
-              <div className="user-info user-label">Email:</div>
-              <div className="user-info">{user.email}</div>
-            </div>
-            <div className="col-sm-12">
-              <Button>Reset Your Password</Button>
-              <Button>Edit Your Profile</Button>
-            </div>
+    if(!this.props.user){
+      //return early if our user is not loaded (page will redirect)
+      return (<div></div>);
+    }
+    var user = this.props.user.attributes;
+    return (
+      <div>
+        <TitleChiron title="Your Information" />
+        <div className="row">
+          <div className="col-sm-6">
+            <div className="user-info user-label">First Name:</div>
+            <div className="user-info">{user.firstname}</div>
           </div>
-          <TitleChiron title="Your Recipes" />
-          <div className="row">
-            <div className="col-sm-12">
-              <UserRecipes user={this.props.user} />
-            </div>
+          <div className="col-sm-6">
+            <div className="user-info user-label">Last Name:</div>
+            <div className="user-info">{user.lastname}</div>
+          </div>
+          <div className="col-sm-6">
+            <div className="user-info user-label">Username:</div>
+            <div className="user-info">{user.username}</div>
+          </div>
+          <div className="col-sm-6">
+            <div className="user-info user-label">Email:</div>
+            <div className="user-info">{user.email}</div>
+          </div>
+          <div className="col-sm-12">
+            <Button>Reset Your Password</Button>
+            <Button>Edit Your Profile</Button>
           </div>
         </div>
-      );
-    }else{
-      return ( <div></div> );
-    }
+        <TitleChiron title="Your Recipes" />
+        <div className="row">
+          <div className="col-sm-12">
+            <UserRecipes user={this.props.user} />
+          </div>
+        </div>
+      </div>
+    );
   }
 });
 

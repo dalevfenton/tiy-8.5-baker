@@ -1,8 +1,8 @@
 //3rd party libs & frameworks
-var React = require('react');
-var Backbone = require('backbone');
 var _ = require('underscore');
+var Backbone = require('backbone');
 var Parse = require('parse');
+var React = require('react');
 
 //setup parse SDK to connect to server
 Parse.initialize("dvf_tiy_gvl");
@@ -10,12 +10,13 @@ Parse.serverURL = 'http://tiy-parse-server.herokuapp.com';
 
 //require in child components
 var Header = require('./header.jsx');
-var Sidebar = require('./sidebar.jsx');
+var Home = require('./home.jsx');
 var NewRecipe = require('./newrecipe.jsx');
+var Profile = require('./profile.jsx');
 var Recipe = require('./recipe.jsx');
 var RecipeDelete = require('./recipedelete.jsx');
-var Home = require('./home.jsx');
-var Profile = require('./profile.jsx');
+var RecipeType = require('./recipetype.jsx');
+var Sidebar = require('./sidebar.jsx');
 
 //lists used to populate sidebar & home screens
 var userList = ['user', 'public', 'popular', 'favorite'];
@@ -203,6 +204,12 @@ var Interface = React.createClass({
       body = (
         <Home types={types} user={this.state.user} />
       );
+    }else if(this.state.router.current == 'type'){
+      //category detail page
+      body = (
+        <RecipeType type={this.state.router.typeName}
+          user={this.state.user} />
+      );
     }else if(this.state.router.current == 'new'){
       //new recipe form
       body = (
@@ -216,13 +223,13 @@ var Interface = React.createClass({
           user={this.state.user} />
       );
     }else if(this.state.router.current == 'recipeEdit'){
-      //single recipe detail page
+      //single recipe detail edit page
       body = (
         <NewRecipe id={this.state.router.recipeId}
           user={this.state.user} type="edit" recipeSubmit={this.recipeSubmit} />
       );
     }else if(this.state.router.current == 'recipeDelete'){
-      //single recipe detail page
+      //single recipe detail delete confirmation page
       body = (
         <RecipeDelete id={this.state.router.recipeId}
           user={this.state.user} />
