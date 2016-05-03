@@ -27,6 +27,7 @@ var Recipe = React.createClass({
 
     var recipe, steps;
     var query = new Parse.Query(Recipe);
+
     query.get(this.props.id).then(function(recipeObj) {
       // the recipe listing was retrieved
       recipe = recipeObj;
